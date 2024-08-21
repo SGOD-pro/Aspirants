@@ -79,13 +79,12 @@ function Navbar() {
 			opacity: 1,
 			transition: {
 				staggerChildren: 0.2,
-				easeIn: easeIn,
 			},
 		},
 	};
 
 	const linkVariants = {
-		hidden: { y: -15, opacity: 0, filter: "blur(10px)" },
+		hidden: { y: -5, opacity: 0, filter: "blur(10px)" },
 		visible: { y: 0, opacity: 1, filter: "blur(0px)" },
 	};
 	if (logingout) {
@@ -114,7 +113,6 @@ function Navbar() {
 						variants={containerVariants}
 						initial="hidden"
 						animate={showNav ? "visible" : "hidden"}
-						transition={{ duration: 1.6, ease: "easeOut" }}
 					>
 						{NAV_ITEMS.map((item) => (
 							<motion.div key={item.name} variants={linkVariants}>

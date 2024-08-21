@@ -5,7 +5,7 @@ import { getStudentStore, studentStore } from "@/global/StudentsStore"; // Use t
 import { getEventStore } from "@/global/Event"; // Use the hook
 import getTopersStore from "@/global/Topers"; // Use the hook
 import { Button } from "@/components/ui/button";
-import { UserRoundPlus, CalendarPlus, Plus,Fullscreen } from "lucide-react";
+import { UserRoundPlus, CalendarPlus, Plus, Fullscreen } from "lucide-react";
 import Dialog from "@/components/Dialog";
 const AddstudentForm = lazy(() => import("@/components/forms/AddstudentForm"));
 const CarouselPlugin = lazy(
