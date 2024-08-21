@@ -34,7 +34,6 @@ import { getStudentStore } from "@/global/StudentsStore";
 import { getCourseStore } from "@/global/CoursesStore";
 import { toast } from "../ui/use-toast";
 
-import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 function AddstudentForm({
 	defaultValue,
@@ -65,6 +64,7 @@ function AddstudentForm({
 			const response = await addStudent(values);
 			setDisabled(false);
 			if (response.success) {
+				form.reset();
 				toast({
 					title: "Student added!",
 					description: (
@@ -90,7 +90,7 @@ function AddstudentForm({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="grid grid-cols-2 gap-2 sm:gap-3 items-end"
+				className="grid grid-cols-2 gap-2 sm:gap-3 items-end mt-3"
 			>
 				<FormField
 					control={form.control}
@@ -123,7 +123,6 @@ function AddstudentForm({
 						</FormItem>
 					)}
 				/>
-
 				<FormField
 					control={form.control}
 					name="email"
@@ -201,27 +200,36 @@ function AddstudentForm({
 						</FormItem>
 					)}
 				/>
+
 				<FormField
 					control={form.control}
 					name="college"
 					render={({ field }) => (
 						<FormItem>
+							<FormLabel>School/Collage</FormLabel>
 							<FormControl>
-								<FormLabel>School/Collage</FormLabel>
 								<RadioGroup
 									className="flex gap-3 mt-2"
 									onValueChange={(value) => {
 										handleStudyChange(value), field.onChange(value);
 									}}
 								>
-									<div className="flex items-center space-x-2">
+									<FormItem className="flex items-center space-x-2">
+										<FormControl>
 										<RadioGroupItem value="school" id="school" />
-										<Label htmlFor="school">School</Label>
-									</div>
-									<div className="flex items-center space-x-2">
+										</FormControl>
+										<FormLabel className="font-normal">
+										School
+										</FormLabel>
+									</FormItem>
+									<FormItem className="flex items-center space-x-2">
+										<FormControl>
 										<RadioGroupItem value="collage" id="collage" />
-										<Label htmlFor="collage">Collage</Label>
-									</div>
+										</FormControl>
+										<FormLabel className="font-normal">
+										Collage
+										</FormLabel>
+									</FormItem>
 								</RadioGroup>
 							</FormControl>
 							<FormMessage />
@@ -314,4 +322,4 @@ function AddstudentForm({
 	);
 }
 
-export default memo(AddstudentForm);
+export default AddstudentForm;

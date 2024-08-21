@@ -25,7 +25,11 @@ import { eventSchema } from "@/models/EventSchema";
 import { Textarea } from "@/components/ui/textarea";
 import { useEventStore } from "@/global/Event";
 
-function AddEventForm() {
+function AddEventForm({
+	defaultValue,
+}: {
+	defaultValue?: z.infer<typeof eventSchema>;
+}) {
 	const { addEvent } = useEventStore((state) => ({
 		addEvent: state.addEvent,
 	}));
@@ -53,7 +57,7 @@ function AddEventForm() {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-3">
 				<FormField
 					control={form.control}
 					name="description"
@@ -61,10 +65,7 @@ function AddEventForm() {
 						<FormItem>
 							<FormLabel>Content</FormLabel>
 							<FormControl>
-								<Textarea
-									placeholder="Type your event here."
-									{...field}
-								/>
+								<Textarea placeholder="Type your event here." {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>

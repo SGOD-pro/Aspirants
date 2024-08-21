@@ -7,7 +7,6 @@ import getTopersStore from "@/global/Topers"; // Use the hook
 import { Button } from "@/components/ui/button";
 import { UserRoundPlus, CalendarPlus, Plus, Fullscreen } from "lucide-react";
 import Dialog from "@/components/Dialog";
-const AddstudentForm = lazy(() => import("@/components/forms/AddstudentForm"));
 const CarouselPlugin = lazy(
 	() => import("@/app/admin/components/AdminCarousel")
 );
@@ -24,6 +23,7 @@ import Container from "@/components/layout/Container";
 import { toast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddEventForm from "@/components/forms/AddEventForm";
+import AddstudentForm from "@/components/forms/AddstudentForm";
 
 function AdminDashboard() {
 	const { allSubjects, allCourses } = getCourseStore();

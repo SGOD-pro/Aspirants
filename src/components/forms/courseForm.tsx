@@ -84,28 +84,36 @@ function AddCourses() {
 	};
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(submit)} className="space-y-5">
-				<FormField
+			<form onSubmit={form.handleSubmit(submit)} className="space-y-5 mt-3">
+			<FormField
 					control={form.control}
 					name="college"
 					render={({ field }) => (
 						<FormItem>
+							<FormLabel>School/Collage</FormLabel>
 							<FormControl>
-								<FormLabel>School/Collage</FormLabel>
 								<RadioGroup
 									className="flex gap-3 mt-2"
 									onValueChange={(value) => {
 										handleStudyChange(value), field.onChange(value);
 									}}
 								>
-									<div className="flex items-center space-x-2">
+									<FormItem className="flex items-center space-x-2">
+										<FormControl>
 										<RadioGroupItem value="school" id="school" />
-										<Label htmlFor="school">School</Label>
-									</div>
-									<div className="flex items-center space-x-2">
+										</FormControl>
+										<FormLabel className="font-normal">
+										School
+										</FormLabel>
+									</FormItem>
+									<FormItem className="flex items-center space-x-2">
+										<FormControl>
 										<RadioGroupItem value="collage" id="collage" />
-										<Label htmlFor="collage">Collage</Label>
-									</div>
+										</FormControl>
+										<FormLabel className="font-normal">
+										Collage
+										</FormLabel>
+									</FormItem>
 								</RadioGroup>
 							</FormControl>
 							<FormMessage />
