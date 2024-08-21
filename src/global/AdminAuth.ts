@@ -64,13 +64,15 @@ export const useAuthStore = create<AdminAuth>()(
 							const userDoc = await getDoc(userDocRef);
 							if (userDoc.exists()) {
 								set({ user, userPrefs: userDoc.data() as UserPrefs });
+								if (userDoc.data()?.isAdmin) {
+									set({ user: null, userPrefs: null });
+								}
 								console.log(userDoc.data());
-								
 							} else {
 								set({ user, userPrefs: null });
 							}
 						} else {
-							console.log("no user")
+							console.log("no user");
 							set({ user: null, userPrefs: null });
 						}
 						set({ hydrated: true });
@@ -83,11 +85,13 @@ export const useAuthStore = create<AdminAuth>()(
 
 			async createAccount(email: string, password: string) {
 				try {
-				
-					const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+					const userCredential = await createUserWithEmailAndPassword(
+						auth,
+						email,
+						password
+					);
 					const user = userCredential.user;
-			
-				
+
 					await setDoc(doc(db, "users", user.uid), {
 						isVerified: false,
 					} as UserPrefs);
@@ -107,21 +111,19 @@ export const useAuthStore = create<AdminAuth>()(
 					}
 
 					set({ user, userPrefs: { isVerified: false } });
-			
+
 					return { success: true, user };
-				} catch (error:any) {
+				} catch (error: any) {
 					// Handle errors, such as if the user already exists
-					if (error.code === 'auth/email-already-in-use') {
+					if (error.code === "auth/email-already-in-use") {
 						return {
 							success: false,
 							error: new Error("User already exists"),
 						};
 					}
-			
 					return { success: false, error: error as Error };
 				}
 			},
-			
 
 			async login(email: string, password: string, isStudent: boolean) {
 				try {
@@ -177,7 +179,7 @@ export const useAuthStore = create<AdminAuth>()(
 				try {
 					await signOut(auth);
 					set({ user: null, userPrefs: null });
-				
+
 					return { success: true };
 					console.log("logged out");
 				} catch (error) {
@@ -198,4 +200,3 @@ export const useAuthStore = create<AdminAuth>()(
 );
 
 export const getAuthState = () => useAuthStore.getState();
-

@@ -17,18 +17,20 @@ import { useForm } from "react-hook-form";
 import InputOTPForm from "./OtpValidation";
 import { getAuthState } from "@/global/AdminAuth";
 import { toast } from "../ui/use-toast";
-
+import Spinner from "../layout/Spinner";
+import { MoveRight } from "lucide-react";
 export default function SignupForm() {
 	const { createAccount } = getAuthState();
 	const [emailSend, setEmailSend] = React.useState(false);
 	const form = useForm<z.infer<typeof userSignupSchema>>({
 		resolver: zodResolver(userSignupSchema),
 	});
-
+	const [loading, setLoading] = React.useState(false);
 	async function onSubmit(values: z.infer<typeof userSignupSchema>) {
+		setLoading(true);
 		const response = await createAccount(values.email, values.password);
 		console.log(response);
-
+		setLoading(false);
 		if (response.success) {
 			setEmailSend(true);
 		} else {
@@ -110,7 +112,13 @@ export default function SignupForm() {
 						className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] mt-4"
 						type="submit"
 					>
-						Sign up &rarr;
+						{loading ? (
+							<Spinner />
+						) : (
+							<p className="flex gap-2 transition-all items-center hover:gap-5 justify-center">
+								Sign up <MoveRight />
+							</p>
+						)}
 						<BottomGradient />
 					</button>
 				</form>

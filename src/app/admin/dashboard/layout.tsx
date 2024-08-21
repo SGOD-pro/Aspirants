@@ -11,7 +11,6 @@ export default function RootLayout({
 	if (!auth.userPrefs?.isAdmin||!auth.userPrefs?.isVerified) {
 		notFound();
 	}
-	
 	return (
 		<main className="grid grid-cols-[1fr,4fr] w-screen max-h-screen overflow-hidden">
 			<AdminNavbar />
