@@ -76,7 +76,7 @@ function WhySection() {
 		<>
 			<div className="hidden sm:block relative z-10">
 				<LampContainer>
-					<h2 className="text-4xl sm:text-6xl text-center font-semibold -translate-y-6">
+					<h2 className="text-4xl sm:text-6xl text-center font-semibold">
 						Why <br /> <strong> Aspirants Classes?</strong>
 					</h2>
 				</LampContainer>

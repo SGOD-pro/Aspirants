@@ -1,7 +1,13 @@
 
 import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
-import { Open_Sans } from "next/font/google";
+import { Open_Sans,Roboto } from "next/font/google";
+
+const roboto = Roboto({
+  weight: ['400', '500', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+});
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 const inter = Open_Sans({ subsets: ["latin"] });

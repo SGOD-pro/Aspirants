@@ -3,13 +3,6 @@ import uploadFile from "@/lib/UploadFiles";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import {
-	getStorage,
-	ref,
-	list,
-	getDownloadURL,
-	ListResult,
-} from "firebase/storage";
-import {
 	addDoc,
 	collection,
 	serverTimestamp,
@@ -22,8 +15,10 @@ import {
 	limit,
 	startAfter,
 	getDocs,
-	
 } from "firebase/firestore";
+import { persist } from "zustand/middleware";
+import { dateTime } from "@/lib/FormatDateTime";
+
 export interface ImageDoc {
 	photoURL: string;
 	createdAt: Date | string;
@@ -55,7 +50,7 @@ const useGalleryStore = create<GalleryStore>()(
 				const docData: ImageDoc = {
 					uid: docRef.id,
 					photoURL: fileURL.fileURL,
-					createdAt: docSnapshot.data()?.createdAt,
+					createdAt: dateTime(docSnapshot.data()?.createdAt.toDate())||"",
 				};
 				console.log(docData);
 				set((state) => {
@@ -71,9 +66,8 @@ const useGalleryStore = create<GalleryStore>()(
 		removeImages: async (id: string) => {
 			try {
 				await deleteDoc(doc(db, "gallery", id));
-
 				set((state) => ({
-					courses: state.images?.filter((toper) => toper.uid !== id) || null,
+					images: state.images?.filter((toper) => toper.uid !== id) || null,
 				}));
 				return { success: true };
 			} catch (error) {
@@ -83,25 +77,23 @@ const useGalleryStore = create<GalleryStore>()(
 		fetchImages: async (pageNo: number) => {
 			try {
 				console.log("fetching images...");
-				
+
 				const galleryRef = collection(db, "gallery");
 				const q = query(galleryRef, orderBy("createdAt", "desc"));
 				const querySnapshot = await getDocs(collection(db, "gallery"));
 				const images: ImageDoc[] = querySnapshot.docs.map((doc) => ({
-				  uid: doc.id,
-				  photoURL:doc.data().photoURL,
-				  createdAt: doc.data().createdAt.toDate(),
+					uid: doc.id,
+					photoURL: doc.data().photoURL,
+					createdAt: doc.data().createdAt.toDate(),
 				}));
-				console.log(images)
-				set({images});
+				console.log(images);
+				set({ images });
 				return { success: true };
 			} catch (error) {
 				console.error("Error fetching images:", error);
 				return { success: false, error: error as Error };
 			}
 		},
-		
-		
 	}))
 );
 export { useGalleryStore };

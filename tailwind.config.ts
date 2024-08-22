@@ -70,21 +70,20 @@ const config = {
 				fourth: "moveHorizontal 40s ease infinite",
 				fifth: "moveInCircle 20s ease infinite",
 				scroll:
-				"scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
-			
+					"scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
 			},
 			scroll: {
 				to: {
-				  transform: "translate(calc(-50% - 0.5rem))",
+					transform: "translate(calc(-50% - 0.5rem))",
 				},
-			  },
+			},
 			boxShadow: {
 				input: `0px 2px 3px -1px rgba(0,0,0,0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08)`,
 			},
 			filter: {
 				"contrast-more": "contrast(200%)",
-				'saturate-more': 'saturate(200%)',
-			},	
+				"saturate-more": "saturate(200%)",
+			},
 			keyframes: {
 				"accordion-down": {
 					from: { height: "0" },
@@ -127,6 +126,9 @@ const config = {
 						transform: "translateY(-50%)",
 					},
 				},
+			},
+			fontFamily: {
+				roboto: ["Roboto", "sans-serif"],
 			},
 		},
 	},

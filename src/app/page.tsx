@@ -22,7 +22,7 @@ export default function Home() {
 
 	return (
 		<main className="scrollbar">
-			<section className="relative h-[70dvh] lg:h-[95dvh] z-0">
+			<section className="relative h-[90dvh] lg:h-[95dvh] z-40 flex justify-between">
 				<Suspense fallback={<Skeleton className="w-full h-full" />}>
 					<LandingPage />
 				</Suspense>

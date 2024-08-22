@@ -3,6 +3,8 @@ import React from "react";
 import { StarsBackground } from "@/components/ui/star-background";
 import { ShootingStars } from "@/components/ui/sooting-star";
 import { HoverBorderGradient } from "@/components/ui/border-gradient";
+import EsterEgg from "../ui/EsterEgg";
+
 function Section1() {
 	return (
 		<>
@@ -31,6 +33,9 @@ function Section1() {
 					</HoverBorderGradient>
 				</div>
 			</aside>
+			<div className="pr-8 hidden lg:block absolute right-20 top-10 z-[100]">
+				<EsterEgg />
+			</div>
 		</>
 	);
 }
