@@ -12,9 +12,9 @@ export default function RootLayout({
 		notFound();
 	}
 	return (
-		<main className="grid grid-cols-[1fr,4fr] w-screen max-h-screen overflow-hidden">
+		<main className="grid grid-cols-[1fr,4fr] w-screen max-h-[100dvh] overflow-hidden">
 			<AdminNavbar />
-			<div className="border-l p-2 pt-0 max-h-screen overflow-auto overflow-x-hidden scrollbar">{children}</div>
+			<div className="border-l p-2 pt-0 max-h-[100dvh] overflow-auto overflow-x-hidden scrollbar">{children}</div>
 		</main>
 	);
 }

@@ -25,7 +25,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${inter.className} scrollbar w-screen overflow-x-hidden`}
+				className={`${inter.className} scrollbar w-screen overflow-x-hidden body`}
 			>
 				{" "}
 				<ThemeProvider
@@ -37,7 +37,7 @@ export default function RootLayout({
 					  <Curtain />
 					<Toaster />
 					<Navbar />
-					<main className="max-w-screen min-h-screen">{children}</main>
+					<main className="max-w-screen min-h-[100dvh]">{children}</main>
 				</ThemeProvider>
 			</body>
 		</html>

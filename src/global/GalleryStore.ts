@@ -22,6 +22,7 @@ import {
 	limit,
 	startAfter,
 	getDocs,
+	
 } from "firebase/firestore";
 export interface ImageDoc {
 	photoURL: string;
@@ -89,7 +90,7 @@ const useGalleryStore = create<GalleryStore>()(
 				const images: ImageDoc[] = querySnapshot.docs.map((doc) => ({
 				  uid: doc.id,
 				  photoURL:doc.data().photoURL,
-				  createdAt: doc.data().createdAt,
+				  createdAt: doc.data().createdAt.toDate(),
 				}));
 				console.log(images)
 				set({images});

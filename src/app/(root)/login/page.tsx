@@ -1,29 +1,31 @@
-"use client"
+"use client";
+import { lazy, Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IconBrandGoogle, IconBrandApple } from "@tabler/icons-react";
-import SignupForm from "@/components/forms/UserSignup";
-import SigninForm from "@/components/forms/UserSignin";
+const SigninForm = lazy(() => import("@/components/forms/UserSignin"));
+const SignupForm = lazy(() => import("@/components/forms/UserSignup"));
 import { BackgroundGradientAnimation } from "@/components/ui/gradient-background";
 import { getAuthState } from "@/global/AdminAuth";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TabsDemo() {
 	const router = useRouter();
 	const { signInWithGoogle } = getAuthState();
-	const GoogleSignin=async()=>{
-		const response=await signInWithGoogle();
-		if(response.success){
-			router.push("/")
-		}else{
+	const GoogleSignin = async () => {
+		const response = await signInWithGoogle();
+		if (response.success) {
+			router.push("/");
+		} else {
 			toast({
 				title: "Invalid Credentials",
 				description: `${response?.error}` || "Something went wrong",
 				variant: "destructive",
-			})
+			});
 		}
-	}
+	};
 	return (
 		<section className="flex min-h-screen items-center justify-center sm:pt-16">
 			<div className="fixed top-0 left-0 -z-0 brightness-75 opacity-20">
@@ -36,15 +38,18 @@ export default function TabsDemo() {
 				</TabsList>
 				<TabsContent value="signin" className="bg-transparent">
 					<Card>
-						<SigninForm />
+						<Suspense fallback={<Skeleton className="w-full h-72" />}>
+							<SigninForm />
+						</Suspense>
 					</Card>
 				</TabsContent>
 				<TabsContent value="signup">
 					<Card>
-						<SignupForm />
+						<Suspense fallback={<Skeleton className="w-full h-96" />}>
+							<SignupForm />
+						</Suspense>
 					</Card>
 				</TabsContent>
-
 				<div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-4 h-[1px] w-full" />
 				<div className="flex space-x-2 border rounded-lg p-3 justify-around bg-[#020817]">
 					<button

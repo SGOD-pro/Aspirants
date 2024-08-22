@@ -37,7 +37,9 @@ export default function Home() {
 					<InstractorSection />
 				</Suspense>
 			</section>
-			<Footer />
+			<Suspense fallback={<Skeleton className="w-full h-full" />}>
+				<Footer />
+			</Suspense>
 		</main>
 	);
 }
