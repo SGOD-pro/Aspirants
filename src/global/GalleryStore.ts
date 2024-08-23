@@ -50,7 +50,7 @@ const useGalleryStore = create<GalleryStore>()(
 				const docData: ImageDoc = {
 					uid: docRef.id,
 					photoURL: fileURL.fileURL,
-					createdAt: dateTime(docSnapshot.data()?.createdAt.toDate())||"",
+					createdAt: dateTime(docSnapshot.data()?.createdAt.toDate()) || "",
 				};
 				console.log(docData);
 				set((state) => {
@@ -84,7 +84,7 @@ const useGalleryStore = create<GalleryStore>()(
 				const images: ImageDoc[] = querySnapshot.docs.map((doc) => ({
 					uid: doc.id,
 					photoURL: doc.data().photoURL,
-					createdAt: doc.data().createdAt.toDate(),
+					createdAt: dateTime(doc.data().createdAt.toDate()) ||"",
 				}));
 				console.log(images);
 				set({ images });

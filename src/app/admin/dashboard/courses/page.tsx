@@ -18,11 +18,10 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 
-
 function AdminCourses() {
-	const { courses, popCourses } = coursesStore(state=>({
+	const { courses, popCourses } = coursesStore((state) => ({
 		courses: state.courses,
-		popCourses: state.popCourses
+		popCourses: state.popCourses,
 	}));
 	const deleteFunction = async (id: string) => {
 		const response = await popCourses(id);
@@ -35,30 +34,27 @@ function AdminCourses() {
 		}
 	};
 	return (
-		<div className="">
+		<div className="w-full overflow-x-hidden">
 			<Header>
-				<h2 className="text-3xl font-bold">AllCourses</h2>
+				<Dialog title="Add Course" content={<AddCourses />}>
+					<Button
+						variant={"secondary"}
+						className="flex gap-1 items-center font-bold"
+					>
+						Course <Plus />
+					</Button>
+				</Dialog>
+				<Dialog title="Add subject" content={<Addsubject />}>
+					<Button
+						variant={"secondary"}
+						className="flex gap-1 items-center font-bold"
+					>
+						Subject <Plus />
+					</Button>
+				</Dialog>
 			</Header>
 			<Container>
-				<div className="py-3 flex gap-3">
-					<Dialog title="Add Course" content={<AddCourses />}>
-						<Button
-							variant={"secondary"}
-							className="flex gap-1 items-center font-bold"
-						>
-							Course <Plus />
-						</Button>
-					</Dialog>
-					<Dialog title="Add subject" content={<Addsubject />}>
-						<Button
-							variant={"secondary"}
-							className="flex gap-1 items-center font-bold"
-						>
-							Subject <Plus />
-						</Button>
-					</Dialog>
-				</div>
-				<div className="overflow-auto">
+				<div className="overflow-auto mt-5">
 					<div className="border rounded-md max-h-[80vh] overflow-auto scrollbar">
 						<Table className="">
 							<TableHeader>
@@ -75,21 +71,30 @@ function AdminCourses() {
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{courses&&courses.map((course) => (
-									<TableRow key={course.uid}>
-										<TableCell className="font-medium uppercase">
-											{course.subject}
-										</TableCell>
-										<TableCell className=" uppercase">{course.class}</TableCell>
-										<TableCell className=" uppercase">{course.board}</TableCell>
-										<TableCell className="">
-											{course.fees}
-										</TableCell>
-										<TableCell>
-											<Button variant={"destructive"} size={"icon"} onClick={() => deleteFunction(course.uid!)}><Trash2 /></Button>
-										</TableCell>
-									</TableRow>
-								))}
+								{courses &&
+									courses.map((course) => (
+										<TableRow key={course.uid}>
+											<TableCell className="font-medium uppercase">
+												{course.subject}
+											</TableCell>
+											<TableCell className=" uppercase">
+												{course.class}
+											</TableCell>
+											<TableCell className=" uppercase">
+												{course.board}
+											</TableCell>
+											<TableCell className="">{course.fees}</TableCell>
+											<TableCell>
+												<Button
+													variant={"destructive"}
+													size={"icon"}
+													onClick={() => deleteFunction(course.uid!)}
+												>
+													<Trash2 />
+												</Button>
+											</TableCell>
+										</TableRow>
+									))}
 							</TableBody>
 						</Table>
 					</div>

@@ -3,7 +3,7 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import getAnimationColtrolStore from "@/global/Animation";
 export default function EsterEgg() {
-	const { curtainAnimation, setCurtainAnimation } = getAnimationColtrolStore();
+	const { curtainAnimation } = getAnimationColtrolStore();
 	return (
 		<div className="grid grid-cols-[repeat(6,75px)] grid-rows-[repeat(8,75px)] font-roboto leading-tight tracking-tighter group w-fit">
 			{/* First Element: Rotating Triangle */}

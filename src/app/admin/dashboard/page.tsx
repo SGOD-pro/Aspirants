@@ -62,31 +62,29 @@ function AdminDashboard() {
 	}, []);
 
 	return (
-		<div>
+		<div >
 			<Header>
-				<aside className="flex gap-3">
-					<Dialog content={<AddstudentForm />} title="New Student">
-						<Button
-							variant="default"
-							className="flex font-semibold gap-2 text-primary bg-blue-500 hover:bg-blue-600"
-						>
-							<UserRoundPlus />
-							<span>Add Student</span>
-						</Button>
-					</Dialog>
-					<Dialog content={<AddEventForm />} title="Add Event">
-						<Button variant={"ghost"} className="flex gap-2 items-center">
-							<span>Event</span>
-							<CalendarPlus />
-						</Button>
-					</Dialog>
-					<Dialog title="Our Topers" content={<AddTopers />}>
-						<Button variant={"ghost"} className="flex gap-2 items-center">
-							<span>Achivers</span>
-							<Plus />
-						</Button>
-					</Dialog>
-				</aside>
+				<Dialog content={<AddstudentForm />} title="New Student">
+					<Button
+						variant="default"
+						className="flex font-semibold gap-2 text-primary bg-blue-500 hover:bg-blue-600"
+					>
+						<UserRoundPlus />
+						<span>Add Student</span>
+					</Button>
+				</Dialog>
+				<Dialog content={<AddEventForm />} title="Add Event">
+					<Button variant={"ghost"} className="flex gap-2 items-center border sm:border-none">
+						<span>Event</span>
+						<CalendarPlus />
+					</Button>
+				</Dialog>
+				<Dialog title="Our Topers" content={<AddTopers />}>
+					<Button variant={"ghost"} className="flex gap-2 items-center border sm:border-none">
+						<span>Achivers</span>
+						<Plus />
+					</Button>
+				</Dialog>
 			</Header>
 			<Container>
 				<section className="md:h-72 lg:p-6 lg:pb-4">
