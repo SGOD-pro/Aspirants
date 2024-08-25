@@ -1,16 +1,12 @@
 
 import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
-import { Open_Sans,Roboto } from "next/font/google";
+import { Raleway } from "next/font/google";
 
-const roboto = Roboto({
-  weight: ['400', '500', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-});
+
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-const inter = Open_Sans({ subsets: ["latin"] });
+const inter = Raleway({ subsets: ["latin"] });
 import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -40,7 +36,7 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					  <Curtain />
+					<Curtain />
 					<Toaster />
 					<Navbar />
 					<main className="max-w-screen min-h-[100dvh]">{children}</main>

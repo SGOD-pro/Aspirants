@@ -74,20 +74,20 @@ const content = [
 function WhySection() {
 	return (
 		<>
-			<div className="hidden sm:block relative z-10">
+			<div className="hidden sm:block relative -z-10">
 				<LampContainer>
 					<h2 className="text-4xl sm:text-6xl text-center font-semibold">
 						Why <br /> <strong> Aspirants Classes?</strong>
 					</h2>
 				</LampContainer>
 			</div>
-			<div className="block sm:hidden relative z-10 border-t-2 border-t-cyan-500 mb-5 pt-8">
-				<div className="absolute glow top-0"></div>
-					<h2 className="text-4xl sm:text-6xl text-center font-semibold">
+			<div className="block sm:hidden relative z-10 mb-5 pt-8 w-full">
+				<div className="absolute w-2/3 h-56 rounded-full bg-cyan-600/50 glow top-0 left-1/2 -translate-x-1/2 z-0 -translate-y-1/2 blur-[120px] opacity-80"></div>
+					<h2 className="text-4xl sm:text-6xl text-center font-semibold z-10 relative mb-10">
 						Why <br /> <strong> Aspirants Classes?</strong>
 					</h2>
 			</div>
-			<div className="m-auto w-full md:w-[80dvw] sm:h-[24rem] relative z-20 sm:-translate-y-1/2">
+			<div className="m-auto w-full md:w-[80dvw] relative sm:-translate-y-1/3">
 				<StickyScroll content={content} />
 			</div>
 		</>

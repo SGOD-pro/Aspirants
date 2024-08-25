@@ -12,12 +12,16 @@ import {
 import { ArrowRight } from "lucide-react";
 import ShinyButton from "@/components/ui/ShinyButton";
 import Footer from "@/components/layout/Footer";
+import getAnimationControlStore from "@/global/Animation";
 
 function Courses() {
 	const ref1 = useRef(null);
 	const ref2 = useRef(null);
-
+	const { coursesAnimation, setCoursesAnimationCompleted } =
+		getAnimationControlStore();
 	// Hooks to detect in-view state
+	const shouldAnimate =
+		!coursesAnimation.time || new Date() > new Date(coursesAnimation.time);
 	const isInView1 = useInView(ref1, { once: true });
 	const isInView2 = useInView(ref2, { once: true });
 
@@ -28,19 +32,22 @@ function Courses() {
 
 	return (
 		<div className="scrollbar">
-			
 			<div className="h-[25dvh] md:h-[50dvh] flex items-end pb-10 md:pb-0 md:items-center justify-center">
 				<div className="relative">
 					<motion.h1
-						initial={{ opacity: 0, y: 50 }}
+						initial={{
+							opacity: shouldAnimate ? 0 : 1,
+							y: shouldAnimate ? 50 : 0,
+						}}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.8, ease: "easeOut" }}
 						className="font-extrabold text-6xl md:text-9xl tracking-tight text-white/10 selection:bg-transparent pointer-events-none selection:text-slate-700 mix-blend-difference"
+						onAnimationComplete={setCoursesAnimationCompleted}
 					>
 						<strong>ASPIRANTS</strong>
 					</motion.h1>
 					<motion.p
-						initial={{ opacity: 0 }}
+						initial={{ opacity: shouldAnimate ? 0 : 1 }}
 						animate={{ opacity: 1 }}
 						transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
 						className="text-center w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 tracking-widest text-white/60 text-lg md:text-4xl font-semibold"
@@ -73,18 +80,24 @@ function Courses() {
 								className="pl-1 md:basis-1/2 lg:basis-1/4"
 							>
 								<div className="p-1">
-									<Card>
-										<CardContent className="aspect-square p-6 flex flex-col justify-between">
-											<div className="">
-												<h2 className="text-2xl mb-2 font-bold">
-													Class:- <span className="">7-9</span>
-												</h2>
+									<Card className="overflow-hidden">
+										<CardContent className="aspect-square p-6 flex flex-col justify-between relative overflow-hidden">
+											<div className="absolute w-[calc(100%+1rem)] h-full bg-white/80 rounded-full top-0 left-1/2 -translate-x-1/2 -translate-y-[60%] " />
+											<div className="relative h-full ">
+												<div className="h-[40%] grid place-content-center ">
+													<h2 className="text-4xl mb-2 font-bold text-black">
+														Class:- <span className="">7-9</span>
+													</h2>
+												</div>
+
+												<div className=" mt-5">
 												<h5 className="text-lg font-bold">Board:- </h5>
-												<ul className="text-sm">
+												<ul className="text-sm list-disc flex gap-x-10 flex-wrap pl-3 mt-2">
 													<li>CBSE</li>
 													<li>iccse</li>
 													<li>wbbse</li>
 												</ul>
+												</div>
 											</div>
 											<div className="text-right">
 												<ShinyButton
@@ -122,17 +135,25 @@ function Courses() {
 								className="pl-1 md:basis-1/2 lg:basis-1/4"
 							>
 								<div className="p-1">
-									<Card>
-										<CardContent className=" aspect-square p-6 flex flex-col justify-between">
-											<div className="">
-												<h2 className="text-2xl mb-2 font-bold">
-													Exam Name:- <span className="capitalize">Jee</span>
-												</h2>
-												<h5 className="text-lg font-bold">Subjects:- </h5>
-												<ul className="text-sm">
-													<li>Math</li>
-													<li>Physics</li>
+									<Card className="overflow-hidden">
+										<CardContent className=" aspect-square p-6 flex flex-col justify-between relative overflow-hidden">
+										<div className="absolute w-[calc(100%+1rem)] h-full bg-zinc-100/80 rounded-full top-0 left-1/2 -translate-x-1/2 -translate-y-[60%] " />
+											<div className="relative h-full">
+												<div className="h-[40%] grid place-content-center ">
+													<h2 className="text-4xl mb-2 font-bold text-black">
+														Name:- <span className="capitalize">JEE</span>
+													</h2>
+												</div>
+
+												<div className=" mt-5">
+												<h5 className="text-lg font-bold">subjects:- </h5>
+												<ul className="text-sm list-disc flex gap-x-10 flex-wrap pl-3 mt-2">
+													<li>MATH</li>
+													<li>PHYSICS</li>
+													<li>STATISTIC</li>
+													<li>ENGLISH</li>
 												</ul>
+												</div>
 											</div>
 											<div className="text-right">
 												<ShinyButton

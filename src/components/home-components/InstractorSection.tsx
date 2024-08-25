@@ -12,7 +12,7 @@ function InstractorSection() {
 					<Image
 						width={300}
 						height={300}
-						src="/instractor.jpg"
+						src="/instructor.jpg"
 						alt={"linear board demo"}
 						className="h-full w-full object-cover object-top  rounded-xl saturate-125 contrast-125"
 					></Image>
@@ -20,7 +20,7 @@ function InstractorSection() {
 				<div className="text-center lg:text-left mt-6 lg:mt-0">
 					<h1 className="text-4xl font-bold">Hello there,</h1>
 					<h2 className="text-4xl mb-3">
-						I am <strong>ARNAB,</strong> your instractor
+						I am <strong>ARNAB,</strong> your instructor
 					</h2>
 					<p className="text-gray-500 w-full p-3 sm:p-0 sm:max-w-md m-auto lg:m-0 lg:max-w-lg leading-tight">
 						Welcome to my institution! I am here to guide you through an

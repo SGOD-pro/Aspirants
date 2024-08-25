@@ -3,14 +3,22 @@
 import React, { useState } from "react";
 import WordFadeIn from "../components/ui/text-generator";
 import { motion } from "framer-motion";
-import getAnimationColtrolStore from "@/global/Animation";
+import { animationControl } from "@/global/Animation";
 import { usePathname } from "next/navigation";
 function Curtain() {
 	const [animationComplete, setAnimationComplete] = useState(false);
-	const { curtainAnimation, setCurtainAnimation } = getAnimationColtrolStore();
-	console.log(curtainAnimation);
+
+	const { curtainAnimation, setCurtainAnimationCompleted } = animationControl(
+		(state) => ({
+			curtainAnimation: state.curtainAnimation,
+			setCurtainAnimationCompleted: state.setCurtainAnimationCompleted,
+		})
+	);
 	const pathName = usePathname();
-	if (pathName !== "/" || curtainAnimation) {
+	if (
+		pathName !== "/" ||
+		(curtainAnimation.time && curtainAnimation.time > new Date())
+	) {
 		return;
 	}
 	return (
@@ -22,7 +30,7 @@ function Curtain() {
 				className="fixed top-0 left-0 z-[100] bg-background w-screen h-[100dvh] grid place-content-center"
 				onAnimationComplete={() => {
 					setTimeout(() => {
-						setCurtainAnimation(true);
+						setCurtainAnimationCompleted();
 					}, 5000);
 				}}
 			>

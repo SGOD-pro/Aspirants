@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { easeIn, motion } from "framer-motion"; // Import Framer Motion
+import { motion } from "framer-motion"; // Import Framer Motion
 import { useState, useEffect, useRef, memo } from "react";
 import { usePathname } from "next/navigation";
 import { IconMenu3, IconX } from "@tabler/icons-react";
@@ -11,6 +11,8 @@ import { LogOut } from "lucide-react";
 import { Button } from "./button";
 import Loader from "@/app/loading";
 import { toast } from "./use-toast";
+import UserProfile from "../home-components/UserProfile";
+
 const NAV_ITEMS = [
 	{ name: "Home", link: "/" },
 	{ name: "Courses", link: "/courses" },
@@ -51,9 +53,10 @@ function Navbar() {
 		};
 	}, []);
 	const [userPrefState, setUserPrefs] = useState<any>();
-	const { userPrefs, logout } = useAuthStore((state) => ({
+	const { userPrefs, logout, user } = useAuthStore((state) => ({
 		userPrefs: state.userPrefs,
 		logout: state.logout,
+		user: state.user,
 	}));
 
 	const [logingout, setLogingout] = useState(false);
@@ -95,6 +98,9 @@ function Navbar() {
 			<div className="fixed right-0 top-0 -translate-x-full translate-y-full sm:hidden border p-2 rounded-full backdrop-blur bg-slate-950/10 z-50">
 				<IconMenu3 onClick={() => setShowNav(true)} />
 			</div>
+			{user&&<div className="fixed top-5 right-8 z-50 hidden sm:block">
+				<UserProfile />
+			</div>}
 			<nav
 				className={`h-[100dvh] w-screen sm:h-fit sm:w-[80%] border p-10 sm:p-4 sm:px-5 backdrop-blur sm:bg-slate-950/40 bg-slate-950/95 flex flex-col sm:flex-row sm:justify-between text-3xl sm:text-base sm:items-center gap-10 sm:gap-0 m-auto fixed z-50 right-0  ${
 					showNav ? "translate-x-0" : "translate-x-full"
@@ -114,6 +120,10 @@ function Navbar() {
 						initial="hidden"
 						animate={showNav ? "visible" : "hidden"}
 					>
+						<motion.div variants={linkVariants}>
+							<h2 className="text-2xl">{user?.displayName}</h2>
+							<p className="text-xs">{user?.email}</p>
+						</motion.div>
 						{NAV_ITEMS.map((item) => (
 							<motion.div key={item.name} variants={linkVariants}>
 								<Link
@@ -129,6 +139,15 @@ function Navbar() {
 							</motion.div>
 						))}
 						<motion.div variants={linkVariants}>
+							<Link
+								href="/contactus"
+								className="sm:p-2 sm:border rounded-full hover:bg-gray-500/20 w-fit flex items-center gap-1 underline sm:no-underline"
+							>
+								<Headset className="w-4 h-4 hidden sm:block" />
+								<span className="sm:hidden">Contact us</span>
+							</Link>
+						</motion.div>
+						<motion.div variants={linkVariants}>
 							{!userPrefState?.isVerified ? (
 								<Link
 									href="/login"
@@ -137,19 +156,15 @@ function Navbar() {
 									<span>Sign Up/In</span>
 								</Link>
 							) : (
-								<Button className="rounded-full" variant={"destructive"}>
+								<Button
+									className="sm:rounded-full w-full h-full rounded-lg flex gap-4 items-center justify-center"
+									variant={"destructive"}
+									onClick={userLogout}
+								>
+									<span className="sm:hidden">Logout</span>
 									<LogOut className="w-3 h-3" />
 								</Button>
 							)}
-						</motion.div>
-						<motion.div variants={linkVariants}>
-							<Link
-								href="/contactus"
-								className="sm:p-2 sm:border rounded-full hover:bg-gray-500/20 w-fit flex items-center gap-1 underline sm:no-underline"
-							>
-								<Headset className="w-4 h-4 hidden sm:block" />
-								<span className="sm:hidden">Contact us</span>
-							</Link>
 						</motion.div>
 					</motion.div>
 				) : (

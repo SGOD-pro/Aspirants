@@ -14,8 +14,9 @@ function Gallery() {
 		<>
 			<Header>
 				<Dialog content={<AddGallery />}>
-					<Button variant={"outline"} size={"icon"}>
+					<Button variant={"outline"} size={"icon"} className="w-full sm:w-10 flex gap-3">
 						<IconPhotoPlus />
+						<div className="sm:hidden">Add Image</div>
 					</Button>
 				</Dialog>
 			</Header>

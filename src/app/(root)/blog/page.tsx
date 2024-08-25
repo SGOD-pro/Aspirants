@@ -7,8 +7,15 @@ import Footer from "@/components/layout/Footer";
 import Image from "next/image";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import Link from "next/link";
+import getAnimationControlStore from "@/global/Animation";
+
 // Where Inspiration Meets Information
 function Blogs() {
+
+const { blogAnimation, setBlogAnimationCompleted } = getAnimationControlStore();
+const shouldAnimate = !blogAnimation.time || new Date() > new Date(blogAnimation.time);
+
+
 	// const router = useRouter();
 	// if (!getAuthState().userPrefs?.isVerified) {
 	// 	router.push("/login");
@@ -18,7 +25,7 @@ function Blogs() {
 			<div className="h-[25dvh] md:h-[40dvh] flex items-end pb-10 md:pb-0 md:items-center justify-center">
 				<div className="relative w-full text-center">
 					<motion.h1
-						initial={{ opacity: 0, y: 50 }}
+						initial={{ opacity: shouldAnimate?0:1, y: shouldAnimate?50:0 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.8, ease: "easeOut" }}
 						className="font-extrabold text-6xl md:text-9xl tracking-wider text-white/10 selection:bg-transparent pointer-events-none selection:text-slate-700 mix-blend-difference"
@@ -26,7 +33,7 @@ function Blogs() {
 						<strong>BLOGS</strong>
 					</motion.h1>
 					<motion.p
-						initial={{ opacity: 0 }}
+						initial={{ opacity: shouldAnimate?0:1 }}
 						animate={{ opacity: 1 }}
 						transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
 						className="text-center w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 tracking-tight text-white/60 text-lg md:text-2xl font-semibold"

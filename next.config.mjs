@@ -4,6 +4,7 @@ const nextConfig = {
       domains: [
         'picsum.photos',
         'firebasestorage.googleapis.com',
+        'lh3.googleusercontent.com', // Add this line
       ],
     },
   };

@@ -80,7 +80,7 @@
 	display: inline-block;
 	white-space: nowrap;
 	animation: marquee 40s alternate infinite;
-	animation-delay: 5s; /* Delay before the animation starts */
+	animation-delay: 1s;
 }
 
 .scrollbar {

@@ -3,12 +3,12 @@ import { useGalleryStore } from "@/global/GalleryStore";
 import { Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/global/AdminAuth";
-import React from "react";
+import React, { memo } from "react";
 import Loader from "@/components/layout/Loader";
 import Image from "next/image";
 import { toast } from "@/components/ui/use-toast";
 
-export default function BlurFadeDemo() {
+function BlurFadeDemo() {
 	const { userPrefs } = useAuthStore();
 	const { images, fetchImages, deleteImage } = useGalleryStore((state) => ({
 		images: state.images,
@@ -71,20 +71,22 @@ export default function BlurFadeDemo() {
 	const popup = () => {
 		return (
 			<div
-				className={`fixed top-0 left-0 w-screen h-screen z-40 grid place-items-center 
+				className={`fixed top-0 left-0 w-screen h-screen z-[505] grid place-items-center 
                 transition-all duration-300 ease-in-out
                 ${view ? "scale-100 opacity-100" : "scale-0 opacity-0"}`}
-				
 			>
-				<div className="w-full absolute h-full bg-slate-900/50 z-0" onClick={() => setView(false)}></div>
+				<div
+					className="w-full absolute h-full bg-slate-900/50 z-10"
+					onClick={() => setView(false)}
+				></div>
 				{selectedImage && (
-					<div className="rounded-xl overflow-hidden h-[80dvh] relative z-10">
+					<div className="rounded-xl overflow-hidden max-w-full  w-auto h-auto max-h-[90dvh] relative z-20">
 						<Image
 							width={800}
 							height={600}
 							src={selectedImage}
 							alt="Selected Image"
-							className="w-full h-full object-contain rounded-xl"
+							className="w-auto h-auto max-w-full max-h-[80dvh] object-contain rounded-xl"
 						/>
 					</div>
 				)}
@@ -131,3 +133,4 @@ export default function BlurFadeDemo() {
 		</section>
 	);
 }
+export default memo(BlurFadeDemo);
