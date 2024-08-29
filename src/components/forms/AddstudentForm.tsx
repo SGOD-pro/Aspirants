@@ -12,6 +12,7 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
+	FormDescription,
 } from "@/components/ui/form";
 import {
 	Popover,
@@ -19,7 +20,7 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, CirclePlus } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,12 +30,25 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { getStudentStore } from "@/global/StudentsStore";
 import { getCourseStore } from "@/global/CoursesStore";
 import { toast } from "../ui/use-toast";
-
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import Dialog from "@/components/Dialog";
+import AddUniversity from "@/components/forms/AddUniversity";
+import { useUniversityStore } from "@/global/Universitys";
+
 function AddstudentForm({
 	defaultValue,
 }: {
@@ -46,20 +60,24 @@ function AddstudentForm({
 	});
 	const { addStudent } = getStudentStore();
 	const { subjects } = getCourseStore();
-	const [studySelection, setStudySelection] = useState<
-		"school" | "college" | null
-	>(null);
+	const {universities}=useUniversityStore()
 
-	//TODO:Fetch courses record
-	// const schoolBoards = board.slice(-4);
-	// const collegeBoards = board.slice(0, -4);
-
-	const handleStudyChange = (value: string) => {
-		setStudySelection(value as "school" | "college");
-	};
+	
 	const onSubmit = React.useCallback(
 		async (values: z.infer<typeof studentFormSchema>) => {
+			console.log("kii");
+			
 			console.log(values);
+			toast({
+				title: "Student added!",
+				description: (
+					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+						<code className="text-white">
+							{JSON.stringify(values, null, 2)}
+						</code>
+					</pre>
+				),
+			});
 			setDisabled(true);
 			const response = await addStudent(values);
 			setDisabled(false);
@@ -83,7 +101,7 @@ function AddstudentForm({
 				});
 			}
 		},
-		[form]
+		[]
 	);
 
 	return (
@@ -92,6 +110,7 @@ function AddstudentForm({
 				onSubmit={form.handleSubmit(onSubmit)}
 				className="grid grid-cols-2 gap-2 sm:gap-3 items-end mt-3"
 			>
+				{/* StudentId */}
 				<FormField
 					control={form.control}
 					name="studentId"
@@ -109,56 +128,7 @@ function AddstudentForm({
 						</FormItem>
 					)}
 				/>
-
-				<FormField
-					control={form.control}
-					name="name"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Name</FormLabel>
-							<FormControl>
-								<Input placeholder="John Doe" {...field} disabled={disabled} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="email"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Email</FormLabel>
-							<FormControl>
-								<Input
-									placeholder="xyz@example.com"
-									{...field}
-									disabled={disabled}
-								/>
-							</FormControl>
-							<FormMessage className="text-rose-500" />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					control={form.control}
-					name="phoneNo"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Phone No</FormLabel>
-							<FormControl>
-								<Input
-									placeholder="xxxxxxxxxx"
-									{...field}
-									disabled={disabled}
-								/>
-							</FormControl>
-							<FormMessage className="text-rose-500" />
-						</FormItem>
-					)}
-				/>
-
+				{/* Admission Date */}
 				<FormField
 					control={form.control}
 					name="admissionDate"
@@ -200,7 +170,57 @@ function AddstudentForm({
 						</FormItem>
 					)}
 				/>
-
+				{/* Name */}
+				<FormField
+					control={form.control}
+					name="name"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Name</FormLabel>
+							<FormControl>
+								<Input placeholder="John Doe" {...field} disabled={disabled} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				{/* Email */}
+				<FormField
+					control={form.control}
+					name="email"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Email</FormLabel>
+							<FormControl>
+								<Input
+									placeholder="xyz@example.com"
+									{...field}
+									disabled={disabled}
+								/>
+							</FormControl>
+							<FormMessage className="text-rose-500" />
+						</FormItem>
+					)}
+				/>
+				{/* Phone No */}
+				<FormField
+					control={form.control}
+					name="phoneNo"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Phone No</FormLabel>
+							<FormControl>
+								<Input
+									placeholder="xxxxxxxxxx"
+									{...field}
+									disabled={disabled}
+								/>
+							</FormControl>
+							<FormMessage className="text-rose-500" />
+						</FormItem>
+					)}
+				/>
+				{/* School/Collage */}
 				<FormField
 					control={form.control}
 					name="college"
@@ -209,25 +229,25 @@ function AddstudentForm({
 							<FormLabel>School/Collage</FormLabel>
 							<FormControl>
 								<RadioGroup
-									className="flex gap-3 mt-2"
+									className="flex gap-3 mt-2 items-center justify-around"
 									onValueChange={(value) => {
-										handleStudyChange(value), field.onChange(value);
+										 field.onChange(value==="collage");
 									}}
 								>
 									<FormItem className="flex items-center space-x-2">
 										<FormControl>
-										<RadioGroupItem value="school" id="school" />
+											<RadioGroupItem value="school" id="school" />
 										</FormControl>
-										<FormLabel className="font-normal">
-										School
+										<FormLabel className="font-normal" htmlFor="school">
+											School
 										</FormLabel>
 									</FormItem>
 									<FormItem className="flex items-center space-x-2">
 										<FormControl>
-										<RadioGroupItem value="collage" id="collage" />
+											<RadioGroupItem value="collage" id="collage" />
 										</FormControl>
-										<FormLabel className="font-normal">
-										Collage
+										<FormLabel className="font-normal" htmlFor="collage">
+											Collage
 										</FormLabel>
 									</FormItem>
 								</RadioGroup>
@@ -236,25 +256,49 @@ function AddstudentForm({
 						</FormItem>
 					)}
 				/>
-
+				{/* University/Board */}
 				<FormField
 					control={form.control}
-					name="studyIn"
+					name="university"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>StudyIn</FormLabel>
-							<FormControl>
-								<Input
-									placeholder="Class/Branch"
-									{...field}
-									disabled={disabled}
-								/>
-							</FormControl>
-							<FormMessage className="text-rose-500" />
+							<FormLabel>University/Board</FormLabel>
+							<div className="flex gap-3 ">
+								<Select
+									onValueChange={field.onChange}
+									defaultValue={field.value}
+								>
+									<FormControl>
+										<SelectTrigger>
+											<SelectValue placeholder="Select a university or board" />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										{universities ?
+											universities.map((university) => (
+												<SelectItem key={university.uid} value={university.name}>
+													{university.name}
+												</SelectItem>
+											)):null}
+									</SelectContent>
+								</Select>
+								<Dialog title="Add university" content={<AddUniversity />}>
+									<Button
+										type="button"
+										disabled={disabled}
+										size={"icon"}
+										variant={"outline"}
+									>
+										<CirclePlus className="w-4 h-4" />
+									</Button>
+								</Dialog>
+							</div>
+							<FormMessage />
 						</FormItem>
 					)}
 				/>
-
+			
+				{/* Institution Name */}
 				<FormField
 					control={form.control}
 					name="institutionName"
@@ -263,7 +307,7 @@ function AddstudentForm({
 							<FormLabel>Institution Name</FormLabel>
 							<FormControl>
 								<Input
-									placeholder="School/College Name"
+									placeholder="Instution Name"
 									{...field}
 									disabled={disabled}
 								/>
@@ -273,34 +317,69 @@ function AddstudentForm({
 					)}
 				/>
 
+				{/* Courses/Subjects */}
 				<FormField
 					control={form.control}
-					name="subject"
+					name="subjects"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Subject</FormLabel>
-							<Select onValueChange={field.onChange} defaultValue={field.value}>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder="Select a subject" />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									{subjects ? (
+							<FormLabel className="">Courses/Subjects</FormLabel>
+							<DropdownMenu modal={false}>
+								<DropdownMenuTrigger asChild>
+									<Button variant="outline" className="border-dashed w-full">
+										Courses
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent className="w-56">
+									<DropdownMenuLabel>Courses</DropdownMenuLabel>
+									<DropdownMenuSeparator />
+									{subjects &&
 										subjects.map((item) => (
-											<SelectItem key={item.uid} value={item.name}>
-												{item.name}
-											</SelectItem>
-										))
-									) : (
-										<SelectItem value="null">Nothing</SelectItem>
-									)}
-								</SelectContent>
-							</Select>
+											<FormField
+												key={item.uid}
+												control={form.control}
+												name="subjects"
+												render={({ field }) => {
+													const selectedSubjects = field.value || [];
+													return (
+														<DropdownMenuItem
+															onSelect={(event) => event.preventDefault()}
+														>
+															<FormItem
+																key={item.uid}
+																className="flex flex-row items-start space-x-3 space-y-0"
+															>
+																<FormControl className="space-y-4">
+																	<Checkbox
+																		checked={selectedSubjects.includes(
+																			item.name
+																		)}
+																		onCheckedChange={(checked) => {
+																			const updatedSubjects = checked
+																				? [...selectedSubjects, item.name]
+																				: selectedSubjects.filter(
+																						(value) => value !== item.name
+																				  );
+																			field.onChange(updatedSubjects);
+																		}}
+																	/>
+																</FormControl>
+																<FormLabel className="font-normal">
+																	{item.name}
+																</FormLabel>
+															</FormItem>
+														</DropdownMenuItem>
+													);
+												}}
+											/>
+										))}
+								</DropdownMenuContent>
+							</DropdownMenu>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
+				{/* Payment Fee */}
 				<FormField
 					control={form.control}
 					name="payment"
@@ -317,6 +396,9 @@ function AddstudentForm({
 				<Button type="submit" disabled={disabled}>
 					Submit
 				</Button>
+				<FormDescription className="col-start-1 col-end-3 text-center">
+					For more detials contact to instructor
+				</FormDescription>
 			</form>
 		</Form>
 	);

@@ -138,6 +138,7 @@ export const useAuthStore = create<AdminAuth>()(
 					const data = userDoc.data();
 
 					if (!data?.isVerified) {
+						await signOut(auth);
 						return {
 							success: false,
 							error: new Error("User not verified"),
@@ -179,9 +180,7 @@ export const useAuthStore = create<AdminAuth>()(
 				try {
 					await signOut(auth);
 					set({ user: null, userPrefs: null });
-
 					return { success: true };
-					console.log("logged out");
 				} catch (error) {
 					console.log(error);
 					return { success: false, error: error as Error };

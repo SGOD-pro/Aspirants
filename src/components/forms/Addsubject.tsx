@@ -41,7 +41,7 @@ export default function Addsubject() {
 					</pre>
 				),
 			});
-		}else{
+		} else {
 			toast({
 				title: "Error",
 				description: `${response.error}` || "Something went wrong",
@@ -51,7 +51,13 @@ export default function Addsubject() {
 	}
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+			<form
+				onSubmit={(e) => {
+					e.stopPropagation();
+					form.handleSubmit(onSubmit)(e);
+				}}
+				className="space-y-6"
+			>
 				<FormField
 					control={form.control}
 					name="subject"

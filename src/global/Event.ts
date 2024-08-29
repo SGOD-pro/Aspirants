@@ -30,7 +30,7 @@ const useEventStore = create<ToperStore>()(
 	  events: null,
 	  getEvents: async () => {
 		try {
-		  const querySnapshot = await getDocs(collection(db, "event"));
+		  const querySnapshot = await getDocs(collection(db, "events"));
 		  const events: eventSchemaWithId[] = [];
 		  querySnapshot.forEach((doc) => {
 			events.push({ ...doc.data(), uid: doc.id } as eventSchemaWithId);
@@ -44,7 +44,7 @@ const useEventStore = create<ToperStore>()(
 	  addEvent: async (obj: eventSchemaWithId) => {
 		try {
 		  const docRef: DocumentReference = await addDoc(
-			collection(db, "event"),
+			collection(db, "events"),
 			obj
 		  );
 		  const docId: string = docRef.id;
@@ -63,7 +63,7 @@ const useEventStore = create<ToperStore>()(
 		try {
 		  console.log("deleted");
   
-		  await deleteDoc(doc(db, "event", id));
+		  await deleteDoc(doc(db, "events", id));
 		  set((state) => ({
 			events: state.events?.filter((event) => event.uid !== id) || null,
 		  }));

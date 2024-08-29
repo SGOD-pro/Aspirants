@@ -4,6 +4,7 @@ import { coursesStore, getCourseStore } from "@/global/CoursesStore"; // Use the
 import { getStudentStore, studentStore } from "@/global/StudentsStore"; // Use the hook
 import { getEventStore } from "@/global/Event"; // Use the hook
 import getTopersStore from "@/global/Topers"; // Use the hook
+import {useUniversityStore} from "@/global/Universitys"; // Use the hook
 import { Button } from "@/components/ui/button";
 import { UserRoundPlus, CalendarPlus, Plus, Fullscreen } from "lucide-react";
 import Dialog from "@/components/Dialog";
@@ -23,13 +24,14 @@ import Container from "@/components/layout/Container";
 import { toast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddEventForm from "@/components/forms/AddEventForm";
-import AddstudentForm from "@/components/forms/AddstudentForm";
+const AddstudentForm = lazy(() => import("@/components/forms/AddstudentForm"));
 
 function AdminDashboard() {
 	const { allSubjects, allCourses } = getCourseStore();
 	const { setAllStudents } = getStudentStore();
 	const { getEvents } = getEventStore();
 	const { fetchTopers } = getTopersStore();
+	const {setUniversities}=useUniversityStore()
 	const { subjects } = coursesStore((state) => ({
 		subjects: state.subjects,
 	}));
@@ -43,6 +45,7 @@ function AdminDashboard() {
 			setAllStudents(),
 			getEvents(),
 			fetchTopers(),
+			setUniversities(),
 		]);
 		response.forEach((element) => {
 			if (element?.error) {
@@ -62,9 +65,16 @@ function AdminDashboard() {
 	}, []);
 
 	return (
-		<div >
+		<div>
 			<Header>
-				<Dialog content={<AddstudentForm />} title="New Student">
+				<Dialog
+					content={
+						<Suspense fallback={<Skeleton className="w-full h-96" />}>
+							<AddstudentForm />
+						</Suspense>
+					}
+					title="New Student"
+				>
 					<Button
 						variant="default"
 						className="flex font-semibold gap-2 text-primary bg-blue-500 hover:bg-blue-600"
@@ -74,13 +84,19 @@ function AdminDashboard() {
 					</Button>
 				</Dialog>
 				<Dialog content={<AddEventForm />} title="Add Event">
-					<Button variant={"ghost"} className="flex gap-2 items-center border sm:border-none">
+					<Button
+						variant={"ghost"}
+						className="flex gap-2 items-center border sm:border-none"
+					>
 						<span>Event</span>
 						<CalendarPlus />
 					</Button>
 				</Dialog>
 				<Dialog title="Our Topers" content={<AddTopers />}>
-					<Button variant={"ghost"} className="flex gap-2 items-center border sm:border-none">
+					<Button
+						variant={"ghost"}
+						className="flex gap-2 items-center border sm:border-none"
+					>
 						<span>Achivers</span>
 						<Plus />
 					</Button>

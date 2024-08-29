@@ -1,12 +1,10 @@
 "use client";
 import Container from "@/components/layout/Container";
 import Header from "@/components/layout/Header";
-import Dialog from "@/components/Dialog";
-import React from "react";
+
+import React, { lazy,Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
-import AddCourses from "@/components/forms/courseForm";
-import Addsubject from "@/components/forms/Addsubject";
 import { coursesStore } from "@/global/CoursesStore";
 import {
 	Table,
@@ -17,7 +15,11 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
-
+import Dialog from "@/components/Dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+const AddCourses = lazy(() => import("@/components/forms/courseForm"));
+const Addsubject = lazy(() => import("@/components/forms/Addsubject"));
+const AddUniversity = lazy(() => import("@/components/forms/AddUniversity"));
 function AdminCourses() {
 	const { courses, popCourses } = coursesStore((state) => ({
 		courses: state.courses,
@@ -36,7 +38,7 @@ function AdminCourses() {
 	return (
 		<div className="w-full overflow-x-hidden">
 			<Header>
-				<Dialog title="Add Course" content={<AddCourses />}>
+				<Dialog title="Add Course" content={<Suspense fallback={<Skeleton className="h-80"/>}><AddCourses /></Suspense>}>
 					<Button
 						variant={"secondary"}
 						className="flex gap-1 items-center font-bold"
@@ -44,12 +46,20 @@ function AdminCourses() {
 						Course <Plus />
 					</Button>
 				</Dialog>
-				<Dialog title="Add subject" content={<Addsubject />}>
+				<Dialog title="Add subject" content={<Suspense fallback={<Skeleton className="h-36"/>}><Addsubject /></Suspense> }>
 					<Button
 						variant={"secondary"}
 						className="flex gap-1 items-center font-bold"
 					>
 						Subject <Plus />
+					</Button>
+				</Dialog>
+				<Dialog title="Add subject" content={<Suspense fallback={<Skeleton className="h-56"/>}><AddUniversity /></Suspense>}>
+					<Button
+						variant={"secondary"}
+						className="flex gap-1 items-center font-bold"
+					>
+						University <Plus />
 					</Button>
 				</Dialog>
 			</Header>
@@ -78,10 +88,10 @@ function AdminCourses() {
 												{course.subject}
 											</TableCell>
 											<TableCell className=" uppercase">
-												{course.class}
+												{course.department}
 											</TableCell>
 											<TableCell className=" uppercase">
-												{course.board}
+												{course.university}
 											</TableCell>
 											<TableCell className="">{course.fees}</TableCell>
 											<TableCell>

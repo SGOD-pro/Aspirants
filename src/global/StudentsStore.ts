@@ -15,14 +15,18 @@ import {
 	serverTimestamp,
 } from "firebase/firestore";
 import { capitalizeWords } from "@/lib/Capitalize";
-interface StudentWithId extends Student {
-	uid?:string
+
+export interface StudentWithId extends Student {
+	uid?: string;
 }
 
 interface StudentStore {
 	students: StudentWithId[] | null;
+	hydrated: boolean;
 	setAllStudents(): Promise<void>;
-	addStudent(student: StudentWithId): Promise<{ success: boolean; error?: Error }>;
+	addStudent(
+		student: StudentWithId
+	): Promise<{ success: boolean; error?: Error }>;
 	updateStudent(
 		studentId: string,
 		updatedStudent: Partial<StudentWithId>
@@ -30,48 +34,52 @@ interface StudentStore {
 	deleteStudent(
 		studentId: string
 	): Promise<{ success: boolean; error?: Error }>;
-	hydrated: boolean;
 }
 
 const studentStore = create<StudentStore>()(
-	immer((set) => ({
+	immer((set, get) => ({
 		students: null,
 		hydrated: false,
+
 		setAllStudents: async () => {
+			if (get().students) return;
 			try {
-				const querySnapshot=await getDocs(collection(db, "students"))
+				const querySnapshot = await getDocs(collection(db, "students"));
 				const students = querySnapshot.docs.map((doc) => ({
 					...doc.data(),
 					uid: doc.id,
-				}))as StudentWithId[];
-				set({students})
+				})) as StudentWithId[];
+				set({ students, hydrated: true });
 			} catch (error) {
-				console.log(error);
+				console.error("Error fetching students:", error);
 			}
 		},
+
 		addStudent: async (student: StudentWithId) => {
 			try {
 				const colRef = collection(db, "students");
 				const q = query(colRef, where("studentId", "==", student.studentId));
 				const querySnapshot = await getDocs(q);
+
 				if (querySnapshot.size > 0) {
 					return {
 						success: false,
-						error: new Error("StudentWithId ID already exists"),
+						error: new Error("Student ID already exists"),
 					};
 				}
+
 				student.name = capitalizeWords(student.name);
-				const docRef:DocumentReference=await addDoc(collection(db, "students"), {...student,
-					createdAt: serverTimestamp(),});
-				const docId:string=docRef.id
-				student.uid=docId
-				set((state) => {
-					if (state.students) {
-						state.students.push(student);
-					} else {
-						state.students = [student];
-					}
+				const docRef: DocumentReference = await addDoc(colRef, {
+					...student,
+					createdAt: serverTimestamp(),
 				});
+				const docId: string = docRef.id;
+				student.uid = docId;
+
+				set((state) => {
+					state.students?.push(student);
+				});
+
 				return { success: true };
 			} catch (error) {
 				return { success: false, error: error as Error };
@@ -83,18 +91,18 @@ const studentStore = create<StudentStore>()(
 			updatedStudent: Partial<StudentWithId>
 		) => {
 			if (!studentId) {
-				return {success:false,error:new Error("Cannot get uid!")}
+				return { success: false, error: new Error("Cannot get uid!") };
 			}
+
 			try {
 				await updateDoc(doc(db, "students", studentId), updatedStudent);
 				set((state) => {
-					if (state.students) {
-						state.students = state.students.map((student) =>
-							student.studentId === studentId
-								? { ...student, ...updatedStudent }
-								: student
-						);
-					}
+					if (!state.students) return;
+					state.students = state.students?.map((student) =>
+						student.studentId === studentId
+							? { ...student, ...updatedStudent }
+							: student
+					);
 				});
 				return { success: true };
 			} catch (error) {
@@ -104,16 +112,18 @@ const studentStore = create<StudentStore>()(
 
 		deleteStudent: async (studentId: string) => {
 			if (!studentId) {
-				return {success:false,error:new Error("Cannot get uid!")}
+				return { success: false, error: new Error("Cannot get uid!") };
 			}
+
 			try {
 				await deleteDoc(doc(db, "students", studentId));
 				set((state) => {
-					if (state.students) {
-						state.students = state.students.filter(
-							(student) => student.studentId !== studentId
-						);
+					if (!state.students) {
+						return;
 					}
+					state.students = state.students?.filter(
+						(student) => student.studentId !== studentId
+					);
 				});
 				return { success: true };
 			} catch (error) {
@@ -124,4 +134,4 @@ const studentStore = create<StudentStore>()(
 );
 
 export const getStudentStore = () => studentStore.getState();
-export {studentStore}
+export { studentStore };
