@@ -37,7 +37,7 @@ const MemoizedTableRow = React.memo(({ student, onDelete }: { student: StudentWi
     </TableCell>
   </TableRow>
 ));
-
+MemoizedTableRow.displayName = "MemoizedTableRow";
 function Students() {
   const { courses } = coursesStore((state) => ({
     courses: state.courses,
