@@ -21,7 +21,7 @@ import { capitalizeWords } from "@/lib/Capitalize";
 
 export interface StudentWithId extends Student {
 	uid: string;
-	createdAt?: Date;
+	status?: boolean;
 }
 
 interface StudentStore {
@@ -50,48 +50,21 @@ const studentStore = create<StudentStore>()(
 			totalStudents: 0,
 			lastAdmission: null,
 
-			setAllStudents: async () => {
-				if (get().students) return { success: true };
-				try {
-					const querySnapshot = await getDocs(collection(db, "students"));
-					const students = querySnapshot.docs.map((doc) => ({
-						...doc.data(),
-						uid: doc.id,
-					})) as StudentWithId[];
-					set({ students, hydrated: true });
-					return { success: true };
-				} catch (error) {
-					console.error("Error fetching students:", error);
-					return { success: false, error: error as Error };
-				}
-			},
-
-			setTotalStudents: async () => {
-				try {
-					const querySnapshot = await getDocs(collection(db, "students"));
-					const totalStudents = querySnapshot.size;
-					set({ totalStudents });
-				} catch (error) {
-					console.error("Error fetching total students:", error);
-				}
-			},
-
-			setLastAdmission: async () => {
-				try {
-					const querySnapshot = await getDocs(
-						query(
-							collection(db, "students"),
-							orderBy("createdAt", "desc"),
-							limit(1)
-						)
-					);
-					const lastStudent = querySnapshot.docs[0]?.data() as StudentWithId;
-					// const lastAdmission = lastStudent?.createdAt?.toDate().toISOString() || null;
-					set({ lastAdmission: lastStudent.studentId });
-				} catch (error) {
-					console.error("Error fetching last admission:", error);
-				}
-			},
+		setAllStudents: async () => {
+			if (get().students) return;
+			console.log("fetching students...");
+			
+			try {
+				const querySnapshot = await getDocs(collection(db, "students"));
+				const students = querySnapshot.docs.map((doc) => ({
+					...doc.data(),
+					uid: doc.id,
+				})) as StudentWithId[];
+				set({ students, hydrated: true });
+			} catch (error) {
+				console.error("Error fetching students:", error);
+			}
+		},
 
 			addStudent: async (student: StudentWithId) => {
 				try {

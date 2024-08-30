@@ -1,140 +1,330 @@
 "use client";
-import React, { useEffect, useCallback, useMemo } from "react";
-import Container from "@/components/layout/Container";
-import Header from "@/components/layout/Header";
-import { coursesStore } from "@/global/CoursesStore";
-import { getStudentStore, StudentWithId } from "@/global/StudentsStore";
+
+import React, { useEffect, useCallback, useMemo, useState } from "react";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+	CaretSortIcon,
+	ChevronDownIcon,
+	DotsHorizontalIcon,
+} from "@radix-ui/react-icons";
+import {
+	ColumnDef,
+	ColumnFiltersState,
+	SortingState,
+	VisibilityState,
+	flexRender,
+	getCoreRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { studentStore, StudentWithId } from "@/global/StudentsStore";
+import {
+	DropdownMenu,
+	DropdownMenuCheckboxItem,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
 	Table,
 	TableBody,
 	TableCell,
-	TableHeader,
+	TableFooter,
 	TableHead,
+	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { toast } from "@/components/ui/use-toast";
-import { Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import Loader from "@/components/layout/Loader";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
 
-const MemoizedTableRow = React.memo(
-	({
-		student,
-		onDelete,
-	}: {
-		student: StudentWithId;
-		onDelete: (id: string) => void;
-	}) => (
-		<TableRow key={student.uid}>
-			<TableCell className="font-medium uppercase">
-				{student.studentId}
-			</TableCell>
-			<TableCell className="uppercase">{student.name}</TableCell>
-			<TableCell className="uppercase">{student.university}</TableCell>
-			<TableCell>{student.subjects.join(", ")}</TableCell>
-			<TableCell>
-				<Button
-					variant={"destructive"}
-					size={"icon"}
-					onClick={() => onDelete(student.uid!)}
+const columns: ColumnDef<StudentWithId>[] = [
+	{
+		accessorKey: "name",
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+			>
+				Name
+				<CaretSortIcon className="ml-2 h-4 w-4" />
+			</Button>
+		),
+		cell: ({ row }) => <div>{row.getValue("name")}</div>,
+	},
+	{
+		accessorKey: "studentId",
+		header: "Student ID",
+		cell: ({ row }) => <div>{row.getValue("studentId")}</div>,
+	},
+	{
+		accessorKey: "subjects",
+		header: "Subjects",
+		cell: ({ row }) => {
+			const subjects = row.getValue("subjects") as string[];
+			return <div>{subjects.join(", ")}</div>;
+		},
+	},
+	{
+		accessorKey: "institutionName",
+		header: "Institution Name",
+		cell: ({ row }) => <div>{row.getValue("institutionName")}</div>,
+	},
+	{
+		accessorKey: "status",
+		header: "Status",
+		cell: ({ row }) => (
+			<div className={`font-bold capitalize`}>
+				<span
+					className={`px-3 py-1 rounded-full ${
+						row.getValue("status") ? "bg-emerald-700" : "bg-rose-700"
+					}`}
 				>
-					<Trash2 />
-				</Button>
+					{row.getValue("status") ? "Active" : "Inactive"}
+				</span>
+			</div>
+		),
+	},
+	{
+		id: "actions",
+		enableHiding: false,
+		cell: ({ row }) => {
+			const student = row.original;
+
+			return (
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="ghost" className="h-8 w-8 p-0">
+							<span className="sr-only">Open menu</span>
+							<DotsHorizontalIcon className="h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuLabel className="font-bold">Actions</DropdownMenuLabel>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem className="">
+							<Button className="w-full hover:bg-cyan-600" variant={"outline"}>
+								<IconEdit />
+								<span className="">Update</span>
+							</Button>
+						</DropdownMenuItem>
+						<DropdownMenuItem className="">
+							<Button className="w-full hover:bg-rose-600" variant={"outline"}>
+								<IconTrash />
+								<span className="">Delete</span>
+							</Button>
+						</DropdownMenuItem>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem className="flex gap-3 items-center justify-around">
+							{student.status ? "Deactivate" : "Activate"}
+							<Switch checked={student.status} />
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			);
+		},
+	},
+];
+// Memoize table row component
+const MemoizedTableRow = React.memo(({ row, columns }: any) => (
+	<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+		{row.getVisibleCells().map((cell: any) => (
+			<TableCell key={cell.id}>
+				{flexRender(cell.column.columnDef.cell, cell.getContext())}
 			</TableCell>
-		</TableRow>
-	)
-);
+		))}
+	</TableRow>
+));
 MemoizedTableRow.displayName = "MemoizedTableRow";
-function Students() {
-	const { courses } = coursesStore((state) => ({
-		courses: state.courses,
+
+export default function DataTableDemo() {
+	const { data, fetchStudent } = studentStore((state) => ({
+		data: state.students,
+		fetchStudent: state.setAllStudents,
 	}));
+	const [loading, setLoading] = useState(false);
+	const [sorting, setSorting] = useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+	const [rowSelection, setRowSelection] = useState({});
 
-	const { students, deleteStudent, setAllStudents } = getStudentStore();
-	async function fetchAllStudents() {
-		const response = await setAllStudents();
-    if (!response.success) {
-      toast({
-        title: "Error",
-        description: response.error?.message || "Something went wrong",
-        variant: "destructive",
-      });
-    }
-	}
 	useEffect(() => {
-		fetchAllStudents();
-	}, []);
+		const fetchRecord = async () => {
+			setLoading(true);
+			await fetchStudent();
+			setLoading(false);
+		};
+		fetchRecord();
+	}, [fetchStudent]);
 
-	const deleteFunction = useCallback(async (id: string) => {
-		const response = await deleteStudent(id);
-		if (!response.success) {
-			toast({
-				title: "Error",
-				description: response.error?.message || "Something went wrong",
-				variant: "destructive",
-			});
-		}
-	}, []);
-
-	const renderedStudents = useMemo(
-		() =>
-			students?.map((student) => (
-				<MemoizedTableRow
-					key={student.uid}
-					student={student}
-					onDelete={deleteFunction}
-				/>
-			)),
-		[students, deleteFunction]
+	const table = useReactTable({
+		data: data || [],
+		columns,
+		onSortingChange: setSorting,
+		onColumnFiltersChange: setColumnFilters,
+		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		onColumnVisibilityChange: setColumnVisibility,
+		onRowSelectionChange: setRowSelection,
+		state: {
+			sorting,
+			columnFilters,
+			columnVisibility,
+			rowSelection,
+		},
+	});
+	const handleSearchChange = useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
+			table.getColumn("name")?.setFilterValue(event.target.value);
+		},
+		[table]
 	);
+	const handleStatusFilterChange = useCallback(
+		(checked: boolean, status: string) => {
+			const prevFilter =
+				(table.getColumn("status")?.getFilterValue() as string[]) || [];
+			table
+				.getColumn("status")
+				?.setFilterValue(
+					checked
+						? [...prevFilter, status]
+						: prevFilter.filter((s) => s !== status)
+				);
+		},
+		[table]
+	);
+	const renderedRows = useMemo(() => {
+		return table.getRowModel().rows.map((row) => (
+			<MemoizedTableRow key={row.id} row={row} columns={table.getAllColumns()} />
+		));
+	}, [table,data]);
 
 	return (
-		<>
-			<Header>
-				<div className="space-y-4">
-					<Input placeholder="Search by student ID" />
-					<Select>
-						<SelectTrigger>
-							<SelectValue placeholder="Select a Course" />
-						</SelectTrigger>
-						<SelectContent>
-							{courses ? (
-								courses.map((course) => (
-									<SelectItem key={course.uid} value={course.department}>
-										{course.department}
-									</SelectItem>
-								))
-							) : (
-								<SelectItem value="null">No options available</SelectItem>
-							)}
-						</SelectContent>
-					</Select>
-				</div>
-			</Header>
+		<div className="w-full relative">
+			<div className="flex items-center py-4">
+				<Input
+					placeholder="Search by name..."
+					value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+					onChange={handleSearchChange}
+					className="max-w-sm"
+				/>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="outline" className="ml-2">
+							Filter by Status <ChevronDownIcon className="ml-2 h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="start">
+						{["pending", "processing", "success", "failed"].map((status) => (
+							<DropdownMenuCheckboxItem
+								key={status}
+								checked={
+									(table.getColumn("status")?.getFilterValue() as
+										| string[]
+										| undefined
+									)?.includes(status) ?? false
+								}
+								onCheckedChange={(checked) =>
+									handleStatusFilterChange(checked, status)
+								}
+							>
+								{status}
+							</DropdownMenuCheckboxItem>
+						))}
+					</DropdownMenuContent>
+				</DropdownMenu>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="outline" className="ml-auto">
+							Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						{table
+							.getAllColumns()
+							.filter((column) => column.getCanHide())
+							.map((column) => (
+								<DropdownMenuCheckboxItem
+									key={column.id}
+									className="capitalize"
+									checked={column.getIsVisible()}
+									onCheckedChange={(value) =>
+										column.toggleVisibility(!!value)
+									}
+								>
+									{column.id}
+								</DropdownMenuCheckboxItem>
+							))}
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</div>
 
-			<Container>
-				<div className="border rounded-lg mt-3">
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead className="w-[100px]">Student ID</TableHead>
-								<TableHead className="w-[100px]">Name</TableHead>
-								<TableHead className="w-[100px]">Study in</TableHead>
-								<TableHead className="w-[100px]">Subject</TableHead>
-								<TableHead className="w-[100px]">Action</TableHead>
+			<div className="rounded-md border">
+				{loading && (
+					<div className="absolute top-0 left-0 w-full h-full bg-slate-900/70 z-30">
+						<Loader />
+					</div>
+				)}
+				<Table>
+					<TableHeader>
+						{table.getHeaderGroups().map((headerGroup) => (
+							<TableRow key={headerGroup.id}>
+								{headerGroup.headers.map((header) => (
+									<TableHead key={header.id}>
+										{header.isPlaceholder
+											? null
+											: flexRender(
+													header.column.columnDef.header,
+													header.getContext()
+											  )}
+									</TableHead>
+								))}
 							</TableRow>
-						</TableHeader>
-						<TableBody>{renderedStudents}</TableBody>
-					</Table>
-				</div>
-			</Container>
-		</>
+						))}
+					</TableHeader>
+					<TableBody>
+						{renderedRows.length ? (
+							renderedRows
+						) : (
+							<TableRow>
+								<TableCell
+									colSpan={columns.length}
+									className="h-24 text-center"
+								>
+									No results.
+								</TableCell>
+							</TableRow>
+						)}
+					</TableBody>
+					<TableFooter className="bg-transparent">
+						<div className="space-x-4 p-3 w-full">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => table.previousPage()}
+								disabled={!table.getCanPreviousPage()}
+							>
+								Previous
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => table.nextPage()}
+								disabled={!table.getCanNextPage()}
+							>
+								Next
+							</Button>
+						</div>
+					</TableFooter>
+				</Table>
+			</div>
+		</div>
 	);
 }
