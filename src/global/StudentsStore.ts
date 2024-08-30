@@ -17,7 +17,8 @@ import {
 import { capitalizeWords } from "@/lib/Capitalize";
 
 export interface StudentWithId extends Student {
-	uid?: string;
+	uid: string;
+	status?: boolean;
 }
 
 interface StudentStore {
@@ -43,6 +44,8 @@ const studentStore = create<StudentStore>()(
 
 		setAllStudents: async () => {
 			if (get().students) return;
+			console.log("fetching students...");
+			
 			try {
 				const querySnapshot = await getDocs(collection(db, "students"));
 				const students = querySnapshot.docs.map((doc) => ({
