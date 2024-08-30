@@ -41,7 +41,7 @@ const getRandomStartPoint = () => {
       return { x: 0, y: 0, angle: 45 };
   }
 };
-export const ShootingStars: React.FC<ShootingStarsProps> = ({
+const ShootingStars: React.FC<ShootingStarsProps> = ({
   minSpeed = 5,
   maxSpeed = 15,
   minDelay = 1000,
@@ -144,3 +144,4 @@ export const ShootingStars: React.FC<ShootingStarsProps> = ({
     </svg>
   );
 };
+export default ShootingStars;
