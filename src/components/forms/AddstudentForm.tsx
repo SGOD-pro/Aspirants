@@ -52,15 +52,17 @@ import { Skeleton } from "../ui/skeleton";
 
 function AddstudentForm({
 	defaultValue,
+	id,
 }: {
 	defaultValue?: z.infer<typeof studentFormSchema>;
+	id?: string;
 }) {
 	const [disabled, setDisabled] = useState(false);
 	const form = useForm<z.infer<typeof studentFormSchema>>({
 		resolver: zodResolver(studentFormSchema),
 		defaultValues: defaultValue || {},
 	});
-	const { addStudent } = getStudentStore();
+	const { addStudent, updateStudent } = getStudentStore();
 	const { subjects } = getCourseStore();
 	const { universities } = universityStore((state) => ({
 		universities: state.universities,
@@ -69,30 +71,17 @@ function AddstudentForm({
 	const onSubmit = React.useCallback(
 		async (values: z.infer<typeof studentFormSchema>) => {
 			console.log(values);
-			toast({
-				title: "Student added!",
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">
-							{JSON.stringify(values, null, 2)}
-						</code>
-					</pre>
-				),
-			});
+			console.log("id is",id);
+			let response;
 			setDisabled(true);
-			const response = await addStudent(values);
+			if (defaultValue && id) {
+				response = await updateStudent(id, values);
+			} else response = await addStudent(values);
 			setDisabled(false);
 			if (response.success) {
 				form.reset();
 				toast({
-					title: "Student added!",
-					description: (
-						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-							<code className="text-white">
-								{JSON.stringify(values, null, 2)}
-							</code>
-						</pre>
-					),
+					title: defaultValue && id?"Student updated!":"Student added!",
 				});
 			} else {
 				toast({
@@ -231,9 +220,8 @@ function AddstudentForm({
 							<FormControl>
 								<RadioGroup
 									className="flex gap-3 mt-2 items-center justify-around"
-									onValueChange={(value) => {
-										field.onChange(value);
-									}}
+									onValueChange={field.onChange}
+									defaultValue={field.value}
 								>
 									<FormItem className="flex items-center space-x-2">
 										<FormControl>

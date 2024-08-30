@@ -40,7 +40,7 @@ const MemoizedTableRow = memo(({ course, deleteFunction }:{ course:CourseWithId,
           title="Add Course"
           content={
             <Suspense fallback={<Skeleton className="h-80" />}>
-              <AddCourses defaultValue={course}/>
+              <AddCourses defaultValue={course} id={course.uid}/>
             </Suspense>
           }
         >
@@ -56,7 +56,7 @@ const MemoizedTableRow = memo(({ course, deleteFunction }:{ course:CourseWithId,
     </TableRow>
   );
 });
-
+MemoizedTableRow.displayName="MemoizedTableRow";
 function AdminCourses() {
   const { courses, popCourses } = coursesStore((state) => ({
     courses: state.courses,

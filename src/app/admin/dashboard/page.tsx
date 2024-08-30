@@ -30,7 +30,7 @@ export const AddStudentButton = memo(
 			<Dialog
 				content={
 					<Suspense fallback={<Skeleton className="w-full h-96" />}>
-						<AddstudentForm defaultValue={data} />
+						<AddstudentForm defaultValue={data} id={data?.uid}/>
 					</Suspense>
 				}
 				title="New Student"

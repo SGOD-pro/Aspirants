@@ -40,7 +40,7 @@ function AddCourses({
 }) {
 	console.log(defaultValue);
 
-	const { pushCourses, subjects } = getCourseStore();
+	const { pushCourses, subjects, updateCourses } = getCourseStore();
 	const { universities } = universityStore((state) => ({
 		universities: state.universities,
 	}));
@@ -52,16 +52,16 @@ function AddCourses({
 
 	const submit = useCallback(
 		async (values: z.infer<typeof coursesSchema>) => {
-			console.log(values);
-			console.log(id);
 
-			return;
 			setDisabled(true);
-			const response = await pushCourses(values);
+			let response;
+			if (defaultValue && id) {
+				response = await updateCourses(id,values);
+			} else response = await pushCourses(values);
 			setDisabled(false);
 			if (response.success) {
 				toast({
-					title: "Course added!",
+					title: (defaultValue && id)?"Course updated!":"Course added!",
 					description: (
 						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
 							<code className="text-white">

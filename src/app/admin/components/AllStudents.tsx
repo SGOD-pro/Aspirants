@@ -262,9 +262,9 @@ export default function StudentTable() {
 					onChange={handleSearchChange}
 					className="max-w-sm"
 				/>
-				<DropdownMenu>
+				<DropdownMenu >
 					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-2">
+						<Button variant="outline" className="ml-2" disabled>
 							Filter by Status <ChevronDownIcon className="ml-2 h-4 w-4" />
 						</Button>
 					</DropdownMenuTrigger>

@@ -22,7 +22,7 @@ import { capitalizeWords } from "@/lib/Capitalize";
 export interface StudentWithId extends Student {
 	uid: string;
 	status?: boolean;
-	createdAt?: Date ;
+	createdAt?: Date;
 }
 
 interface StudentStore {
@@ -30,10 +30,10 @@ interface StudentStore {
 	totalStudents: number;
 	lastAdmission: string | null;
 	hydrated: boolean;
-	setAllStudents(): Promise<{ success: boolean; error?: Error }>;
-	setTotalStudents(): Promise<void>;
-	setLastAdmission(): Promise<void>;
+	setTotalStudents(): Promise<{ success: boolean; error?: Error }>;
+	setLastAdmission(): Promise<{ success: boolean; error?: Error }>;
 	addStudent(student: Student): Promise<{ success: boolean; error?: Error }>;
+	setAllStudents(): Promise<{ success: boolean; error?: Error }>;
 	updateStudent(
 		studentId: string,
 		updatedStudent: Partial<StudentWithId>
@@ -53,24 +53,59 @@ const studentStore = create<StudentStore>()(
 
 			setAllStudents: async () => {
 				if (get().students) {
-				  return { success: true };
+					return { success: true };
 				}
 				console.log("fetching students...");
 				try {
-				  const querySnapshot = await getDocs(collection(db, "students"));
-				  const students = querySnapshot.docs.map((doc) => ({
-					...doc.data(),
-					uid: doc.id,
-					admissionDate: doc.data().admissionDate.toDate(),
-				  })) as StudentWithId[];
-				  set({ students, hydrated: true });
-				  return { success: true };
+					const querySnapshot = await getDocs(collection(db, "students"));
+					const students = querySnapshot.docs.map((doc) => ({
+						...doc.data(),
+						uid: doc.id,
+						admissionDate: doc.data().admissionDate.toDate(),
+					})) as StudentWithId[];
+					set({ students, hydrated: true });
+					return { success: true };
 				} catch (error) {
-				  console.error("Error fetching students:", error);
-				  return { success: false, error: error as Error };
+					console.error("Error fetching students:", error);
+					return { success: false, error: error as Error };
 				}
-			  },
+			},
+			setLastAdmission: async () => {
+				try {
+					const colRef = collection(db, "students");
+					const q = query(colRef, orderBy("admissionDate", "desc"), limit(1));
+					const querySnapshot = await getDocs(q);
 
+					if (!querySnapshot.empty) {
+						const latestDoc = querySnapshot.docs[0].data();
+						const lastAdmission = latestDoc.admissionDate
+							.toDate()
+							.toISOString();
+
+						set({ lastAdmission });
+					} else {
+						set({ lastAdmission: null });
+					}
+					return { success: true };
+				} catch (error) {
+					console.error("Error fetching last admission date:", error);
+					return { success: false, error: error as Error };
+				}
+			},
+
+			setTotalStudents: async () => {
+				try {
+					const colRef = collection(db, "students");
+					const querySnapshot = await getDocs(colRef);
+					const totalStudents = querySnapshot.size;
+
+					set({ totalStudents });
+					return { success: true };
+				} catch (error) {
+					console.error("Error fetching total number of students:", error);
+					return { success: false, error: error as Error };
+				}
+			},
 			addStudent: async (student: StudentWithId) => {
 				try {
 					const colRef = collection(db, "students");
@@ -116,14 +151,13 @@ const studentStore = create<StudentStore>()(
 
 				try {
 					await updateDoc(doc(db, "students", studentId), updatedStudent);
-					set((state) => {
-						if (!state.students) return;
-						state.students = state.students?.map((student) =>
-							student.studentId === studentId
-								? { ...student, ...updatedStudent }
-								: student
-						);
-					});
+					set((state) => ({
+						students:
+							state.students?.map((student) =>
+								student.uid === studentId ? { ...student, ...updatedStudent } : student
+							) || null,
+					}));
+					console.log("updated",get().students);
 					return { success: true };
 				} catch (error) {
 					return { success: false, error: error as Error };
@@ -156,7 +190,7 @@ const studentStore = create<StudentStore>()(
 			},
 		})),
 		{
-			name: "student-store", // Storage key
+			name: "student-store",
 			partialize: (state) => ({
 				totalStudents: state.totalStudents,
 				lastAdmission: state.lastAdmission,

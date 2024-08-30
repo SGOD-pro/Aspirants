@@ -16,9 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Tranquiluxe } from "uvcanvas";
 import { getAuthState } from "@/global/AdminAuth";
 import { useRouter } from "next/navigation";
-import {  useState } from "react";
+import React, {  useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-
 function AdminLogin() {
 	const route = useRouter();
 	const { toast } = useToast();
@@ -26,7 +25,7 @@ function AdminLogin() {
 	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
 	});
-	const [disable, setDisable] = useState(false);
+	const [disable, setDisable] = useState(true);
 
 	async function onSubmit(values: z.infer<typeof loginSchema>) {
 		const { email, password } = values;
@@ -44,7 +43,15 @@ function AdminLogin() {
 			setDisable(false);
 		}
 	}
+	React.useEffect(() => {
+        // Simulate a loading delay for demonstration, remove this in production
+        const timer = setTimeout(() => {
+            setDisable(false); // Enable the form after the component has mounted
+        }, 1000);
 
+        // Clean up the timer if the component is unmounted
+        return () => clearTimeout(timer);
+    }, []);
 	return (
 		<div className="flex w-screen h-screen items-center justify-center">
 			<div className="absolute w-full h-full opacity-30">
