@@ -1,7 +1,5 @@
-"use client";
 import * as React from "react";
 import Autoplay from "embla-carousel-autoplay";
-
 import { Card, CardContent } from "@/components/ui/card";
 import {
 	Carousel,
@@ -11,14 +9,8 @@ import {
 	CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-
-function CarouselPlugin({
-	cardContent,
-	length,
-}: {
-	cardContent?: React.ReactNode;
-	length?: number;
-}) {
+import { ToperSchemaWithId } from "@/global/Topers";
+function CarouselPlugin({ topers }: { topers: ToperSchemaWithId[] }) {
 	const plugin = React.useRef(Autoplay({ delay: 5000 }));
 
 	return (
@@ -29,8 +21,8 @@ function CarouselPlugin({
 			onMouseLeave={plugin.current.reset}
 		>
 			<CarouselContent>
-				{Array.from({ length: 5 }).map((_, index) => (
-					<CarouselItem key={index}>
+				{topers.map((toper, index) => (
+					<CarouselItem key={toper.uid}>
 						<div className="p-1">
 							<Card>
 								<CardContent className="grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-3 aspect-square lg:aspect-video items-center justify-center w-full h-full">
@@ -38,19 +30,17 @@ function CarouselPlugin({
 										<Image
 											width={200}
 											height={200}
-											src={"/girl1.jpg"}
-											alt="Image"
+											src={toper.photoURL}
+											alt={toper.name[0]}
 											className="rounded-full w-full h-full object-cover"
 										/>
 									</div>
-									<div className="">
-										<h2 className="text-xl md:text-2xl border-b-2 font-bold pb-2">
-											Joyoshree Sikder
+									<div>
+										<h2 className="text-xl md:text-2xl border-b-2 font-bold pb-2 capitalize">
+											{toper.name}
 										</h2>
 										<p className="text-xs xl:text-sm opacity-70 pt-4">
-											Lorem ipsum dolor sit amet consectetur adipisicing elit.
-											Facilis magni repellat odio provident, ipsa labore
-											consequatur error! Dolore, provident aliquid?
+											{toper.details}
 										</p>
 									</div>
 								</CardContent>
@@ -59,9 +49,10 @@ function CarouselPlugin({
 					</CarouselItem>
 				))}
 			</CarouselContent>
-			<CarouselPrevious className="hidden sm:flex"/>
+			<CarouselPrevious className="hidden sm:flex" />
 			<CarouselNext className="hidden sm:flex" />
 		</Carousel>
 	);
 }
+
 export default CarouselPlugin;

@@ -1,8 +1,6 @@
-
 import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
 import { Raleway } from "next/font/google";
-
 
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -14,7 +12,7 @@ export const metadata: Metadata = {
 };
 import Curtain from "@/components/Curtain";
 import Navbar from "@/components/ui/floting-navbar";
-
+import Main from "./Main";
 
 export default function RootLayout({
 	children,
@@ -23,7 +21,6 @@ export default function RootLayout({
 	notFound?: boolean;
 	error?: boolean;
 }>) {
-
 	return (
 		<html lang="en">
 			<body
@@ -39,7 +36,7 @@ export default function RootLayout({
 					<Curtain />
 					<Toaster />
 					<Navbar />
-					<main className="max-w-screen min-h-[100dvh]">{children}</main>
+					<Main>{children}</Main>
 				</ThemeProvider>
 			</body>
 		</html>

@@ -12,7 +12,7 @@ import {
 	updateDoc,
 	where,
 	query,
-	DocumentReference
+	DocumentReference,
 } from "firebase/firestore";
 import { capitalizeWords } from "@/lib/Capitalize";
 
@@ -21,8 +21,8 @@ interface Subject {
 	uid?: string;
 }
 
-interface CourseWithId extends Course {
-	uid?: string;
+export interface CourseWithId extends Course {
+	uid: string;
 }
 type UpdateSubjectFields = Partial<{
 	name: string;
@@ -50,7 +50,7 @@ interface Courses {
 
 const coursesStore = create<Courses>()(
 	persist(
-		immer((set) => ({
+		immer((set, get) => ({
 			subjects: null,
 			courses: null,
 			hydrated: false,
@@ -59,7 +59,10 @@ const coursesStore = create<Courses>()(
 			allSubjects: async () => {
 				try {
 					const querySnapshot = await getDocs(collection(db, "subjects"));
-
+					if (get().subjects && get().subjects?.length === querySnapshot.size) {
+						console.log("not overlaping");
+						return { success: true };
+					}
 					const subjects = querySnapshot.docs.map((doc) => ({
 						...doc.data(),
 						uid: doc.id,
@@ -74,6 +77,10 @@ const coursesStore = create<Courses>()(
 			allCourses: async () => {
 				try {
 					const querySnapshot = await getDocs(collection(db, "courses"));
+					if (get().courses && get().courses?.length === querySnapshot.size) {
+						console.log("not overlaping");
+						return { success: true };
+					}
 					const courses = querySnapshot.docs.map((doc) => ({
 						...doc.data(),
 						uid: doc.id,
@@ -112,10 +119,15 @@ const coursesStore = create<Courses>()(
 			},
 			pushCourses: async (obj: Course) => {
 				try {
-					const docRef: DocumentReference = await addDoc(collection(db, "courses"), obj);
+					const docRef: DocumentReference = await addDoc(
+						collection(db, "courses"),
+						obj
+					);
 					const docId: string = docRef.id;
 					set((state) => ({
-						courses: state.courses ? [...state.courses, {...obj,uid:docId}] : [{...obj,uid:docId}],
+						courses: state.courses
+							? [...state.courses, { ...obj, uid: docId }]
+							: [{ ...obj, uid: docId }],
 					}));
 					return { success: true };
 				} catch (error) {

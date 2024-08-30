@@ -1,7 +1,7 @@
 "use client";
-import React, { memo, useState } from "react";
+import React, { memo, useState, lazy, Suspense } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { studentFormSchema } from "@/models/StudentSchema";
 import { Button } from "@/components/ui/button";
@@ -46,8 +46,9 @@ import { getCourseStore } from "@/global/CoursesStore";
 import { toast } from "../ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Dialog from "@/components/Dialog";
-import AddUniversity from "@/components/forms/AddUniversity";
-import { useUniversityStore } from "@/global/Universitys";
+const AddUniversity = lazy(() => import("@/components/forms/AddUniversity"));
+import { universityStore } from "@/global/Universitys";
+import { Skeleton } from "../ui/skeleton";
 
 function AddstudentForm({
 	defaultValue,
@@ -60,13 +61,14 @@ function AddstudentForm({
 	});
 	const { addStudent } = getStudentStore();
 	const { subjects } = getCourseStore();
-	const {universities}=useUniversityStore()
+	const { universities } = universityStore(state=>({
+		universities: state.universities
+	}));
 
-	
 	const onSubmit = React.useCallback(
 		async (values: z.infer<typeof studentFormSchema>) => {
 			console.log("kii");
-			
+
 			console.log(values);
 			toast({
 				title: "Student added!",
@@ -231,7 +233,7 @@ function AddstudentForm({
 								<RadioGroup
 									className="flex gap-3 mt-2 items-center justify-around"
 									onValueChange={(value) => {
-										 field.onChange(value==="collage");
+										field.onChange(value === "collage");
 									}}
 								>
 									<FormItem className="flex items-center space-x-2">
@@ -274,15 +276,26 @@ function AddstudentForm({
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
-										{universities ?
-											universities.map((university) => (
-												<SelectItem key={university.uid} value={university.name}>
-													{university.name}
-												</SelectItem>
-											)):null}
+										{universities
+											? universities.map((university) => (
+													<SelectItem
+														key={university.uid}
+														value={university.name}
+													>
+														{university.name}
+													</SelectItem>
+											  ))
+											: null}
 									</SelectContent>
 								</Select>
-								<Dialog title="Add university" content={<AddUniversity />}>
+								<Dialog
+									title="Add university"
+									content={
+										<Suspense fallback={<Skeleton className="h-56" />}>
+											<AddUniversity />
+										</Suspense>
+									}
+								>
 									<Button
 										type="button"
 										disabled={disabled}
@@ -297,7 +310,7 @@ function AddstudentForm({
 						</FormItem>
 					)}
 				/>
-			
+
 				{/* Institution Name */}
 				<FormField
 					control={form.control}
@@ -404,4 +417,4 @@ function AddstudentForm({
 	);
 }
 
-export default AddstudentForm;
+export default memo(AddstudentForm);

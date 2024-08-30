@@ -1,7 +1,7 @@
 "use client";
-import { coursesSchema } from "@/models/CourseSchema";
+import { coursesSchema, Course } from "@/models/CourseSchema";
 import { useForm } from "react-hook-form";
-import React, { memo, useCallback, useState } from "react";
+import React, { lazy, memo, Suspense, useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -22,39 +22,40 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import Dialog from "@/components/Dialog";
-import Addsubject from "@/components/forms/Addsubject";
-import AddUniversity from "@/components/forms/AddUniversity";
+const Addsubject = lazy(() => import("@/components/forms/Addsubject"));
+const AddUniversity = lazy(() => import("@/components/forms/AddUniversity"));
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getCourseStore } from "@/global/CoursesStore";
 import { toast } from "../ui/use-toast";
 import { CirclePlus } from "lucide-react";
 import { universityStore } from "@/global/Universitys";
+import { Skeleton } from "../ui/skeleton";
 
-function AddCourses() {
+function AddCourses({
+	defaultValue,
+	id,
+}: {
+	defaultValue?: Course;
+	id?: string;
+}) {
+	console.log(defaultValue);
+
 	const { pushCourses, subjects } = getCourseStore();
 	const { universities } = universityStore((state) => ({
 		universities: state.universities,
 	}));
-
 	const [disabled, setDisabled] = useState(false);
 	const form = useForm<z.infer<typeof coursesSchema>>({
+		defaultValues: defaultValue || {},
 		resolver: zodResolver(coursesSchema),
 	});
 
 	const submit = useCallback(
 		async (values: z.infer<typeof coursesSchema>) => {
 			console.log(values);
-			// toast({
-			// 	title: "Error",
-			// 	description: (
-			// 		<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-			// 			<code className="text-white">
-			// 				{JSON.stringify(values, null, 2)}
-			// 			</code>
-			// 		</pre>
-			// 	),
-			// 	variant: "destructive",
-			// });
+			console.log(id);
+
+			return;
 			setDisabled(true);
 			const response = await pushCourses(values);
 			setDisabled(false);
@@ -110,7 +111,14 @@ function AddCourses() {
 											))}
 									</SelectContent>
 								</Select>
-								<Dialog title="Add subject" content={<Addsubject />}>
+								<Dialog
+									title="Add subject"
+									content={
+										<Suspense fallback={<Skeleton className="h-36" />}>
+											{<Addsubject />}
+										</Suspense>
+									}
+								>
 									<Button
 										type="button"
 										disabled={disabled}
@@ -202,7 +210,14 @@ function AddCourses() {
 											: null}
 									</SelectContent>
 								</Select>
-								<Dialog title="Add university" content={<AddUniversity />}>
+								<Dialog
+									title="Add university"
+									content={
+										<Suspense fallback={<Skeleton className="h-56" />}>
+											<AddUniversity />
+										</Suspense>
+									}
+								>
 									<Button
 										type="button"
 										disabled={disabled}
@@ -231,6 +246,7 @@ function AddCourses() {
 										type="number"
 										placeholder="Enter fees"
 										onChange={(e) => field.onChange(Number(e.target.value))}
+										defaultValue={field.value}
 									/>
 								</FormControl>
 

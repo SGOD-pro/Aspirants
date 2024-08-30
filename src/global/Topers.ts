@@ -12,9 +12,9 @@ import {
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-interface ToperSchemaWithId extends addTopersSchemaType {
-	uid?: string;
-	photoURL?: string;
+export interface ToperSchemaWithId extends addTopersSchemaType {
+	uid: string;
+	photoURL: string;
 }
 
 interface ToperStore {
@@ -26,7 +26,7 @@ interface ToperStore {
 	deleteToper(id: string): Promise<{ success: boolean; error?: Error }>;
 }
 
-const useToperStore = create<ToperStore>()(
+const toperStore = create<ToperStore>()(
 	immer((set) => ({
 		topers: null,
 		fetchTopers: async () => {
@@ -81,6 +81,6 @@ const useToperStore = create<ToperStore>()(
 	}))
 );
 
-const getTopersStore = () => useToperStore.getState();
+const getTopersStore = () => toperStore.getState();
 export default getTopersStore;
-export { useToperStore };
+export { toperStore };

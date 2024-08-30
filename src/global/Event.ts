@@ -22,13 +22,13 @@ interface ToperStore {
 	) => Promise<{ success: boolean; error?: Error }>;
 	
 	deleteEvent(id: string): Promise<{ success: boolean; error?: Error }>;
-	getEvents(): Promise<{ success: boolean; error?: Error }>;
+	fetchEvents(): Promise<{ success: boolean; error?: Error }>;
 }
 
 const useEventStore = create<ToperStore>()(
 	immer((set) => ({
 	  events: null,
-	  getEvents: async () => {
+	  fetchEvents: async () => {
 		try {
 		  const querySnapshot = await getDocs(collection(db, "events"));
 		  const events: eventSchemaWithId[] = [];

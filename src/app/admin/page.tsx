@@ -50,7 +50,7 @@ function AdminLogin() {
 			<div className="absolute w-full h-full opacity-30">
 				<Tranquiluxe />
 			</div>
-			<div className=" border rounded-lg p-4 backdrop-blur-xl w-full lg:w-1/3 bg-slate-800/20">
+			<div className="shadow-black shadow-md rounded-lg p-4 backdrop-blur-xl w-full lg:w-1/3 bg-slate-800/20">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 						<FormField

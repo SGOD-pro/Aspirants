@@ -10,13 +10,13 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToperStore } from "@/global/Topers";
+import { toperStore } from "@/global/Topers";
 import Image from "next/image";
 
 function ShowTopers() {
-	const { topers, deleteToper } = useToperStore((state) => ({
+	const { topers, deleteToper } = toperStore((state) => ({
 		topers: state.topers,
-		deleteToper: state.deleteToper,
+		deleteToper: state.deleteToper
 	}));
 	const deleteFunction = async (id: string) => {
 		const response = await deleteToper(id);
