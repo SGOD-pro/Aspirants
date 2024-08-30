@@ -1,8 +1,9 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 
 import LampContainer from "@/components/ui/lamp";
-import StickyScroll from "@/components/ui/sticky-scroll";
+const StickyScroll = lazy(() => import("@/components/ui/sticky-scroll"));
 import Image from "next/image";
+import { Skeleton } from "../ui/skeleton";
 
 const content = [
 	{
@@ -83,12 +84,14 @@ function WhySection() {
 			</div>
 			<div className="block sm:hidden relative z-10 mb-5 pt-8 w-full">
 				<div className="absolute w-2/3 h-56 rounded-full bg-cyan-600/50 glow top-0 left-1/2 -translate-x-1/2 z-0 -translate-y-1/2 blur-[120px] opacity-80"></div>
-					<h2 className="text-4xl sm:text-6xl text-center font-semibold z-10 relative mb-10">
-						Why <br /> <strong> Aspirants Classes?</strong>
-					</h2>
+				<h2 className="text-4xl sm:text-6xl text-center font-semibold z-10 relative mb-10">
+					Why <br /> <strong> Aspirants Classes?</strong>
+				</h2>
 			</div>
 			<div className="m-auto w-full md:w-[80dvw] relative sm:-translate-y-1/3">
-				<StickyScroll content={content} />
+				<Suspense fallback={<Skeleton className="w-full h-full" />}>
+					<StickyScroll content={content} />
+				</Suspense>
 			</div>
 		</>
 	);

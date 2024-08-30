@@ -10,8 +10,10 @@ const InstractorSection = lazy(
 	() => import("@/components/home-components/InstractorSection")
 );
 const Footer = lazy(() => import("@/components/layout/Footer"));
-import { StarsBackground } from "@/components/ui/star-background";
-import { ShootingStars } from "@/components/ui/sooting-star";
+const StarsBackground = lazy(() => import("@/components/ui/star-background"));
+const ShootingStars = lazy(() => import("@/components/ui/sooting-star"));
+import LazyLoad from "@/components/layout/LazyLoad";
+
 export default function Home() {
 	const { verifySession } = useAuthStore();
 	React.useEffect(() => {
@@ -23,28 +25,32 @@ export default function Home() {
 
 	return (
 		<main className="scrollbar">
-			<div className="h-[100dvh] absolute top-0 left-0 -z-0 w-full bg-transparent">
-				<StarsBackground />
-				<ShootingStars />
-			</div>
-			<section className="relative h-[50dvh] lg:h-[90dvh] z-40 flex justify-between">
+			<Suspense fallback={<div className="w-full h-full" />}>
+				<div className="h-[100dvh] absolute top-0 left-0 -z-0 w-full bg-transparent">
+					<StarsBackground />
+					<ShootingStars />
+				</div>
+			</Suspense>
+			<section className="relative h-[50dvh] lg:h-[90dvh] z-40 flex justify-between lg:max-h-[800px]">
 				<Suspense fallback={<Skeleton className="w-full h-full" />}>
 					<LandingPage />
 				</Suspense>
 			</section>
-			<section className="w-full relative  sm:p-8 mb-10 sm:mb-1">
-				<Suspense fallback={<Skeleton className="w-full h-full" />}>
-					<WhySection />
-				</Suspense>
-			</section>
-			<section className="">
+			<LazyLoad fallback={<Skeleton className="w-full h-full" />}>
+				<div className="w-full relative  sm:p-8 mb-10 sm:mb-1">
+					<Suspense fallback={<Skeleton className="w-full h-full" />}>
+						<WhySection />
+					</Suspense>
+				</div>
+			</LazyLoad>
+			<LazyLoad fallback={<Skeleton className="w-full h-full" />}>
 				<Suspense fallback={<Skeleton className="w-full h-full" />}>
 					<InstractorSection />
 				</Suspense>
-			</section>
-			<Suspense fallback={<Skeleton className="w-full h-full" />}>
+			</LazyLoad>
+			<LazyLoad fallback={<Skeleton className="w-full h-full" />}>
 				<Footer />
-			</Suspense>
+			</LazyLoad>
 		</main>
 	);
 }
