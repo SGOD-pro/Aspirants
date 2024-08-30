@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect, useCallback, useMemo, useState } from "react";
 import {
 	CaretSortIcon,
 	ChevronDownIcon,
@@ -21,7 +21,6 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { studentStore, StudentWithId } from "@/global/StudentsStore";
-
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -44,22 +43,18 @@ import {
 import Loader from "@/components/layout/Loader";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 
-// Example data structure based on the provided schema
-
-export const columns: ColumnDef<StudentWithId>[] = [
+const columns: ColumnDef<StudentWithId>[] = [
 	{
 		accessorKey: "name",
-		header: ({ column }) => {
-			return (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-				>
-					Name
-					<CaretSortIcon className="ml-2 h-4 w-4" />
-				</Button>
-			);
-		},
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+			>
+				Name
+				<CaretSortIcon className="ml-2 h-4 w-4" />
+			</Button>
+		),
 		cell: ({ row }) => <div>{row.getValue("name")}</div>,
 	},
 	{
@@ -135,27 +130,37 @@ export const columns: ColumnDef<StudentWithId>[] = [
 		},
 	},
 ];
+// Memoize table row component
+const MemoizedTableRow = React.memo(({ row, columns }: any) => (
+	<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+		{row.getVisibleCells().map((cell: any) => (
+			<TableCell key={cell.id}>
+				{flexRender(cell.column.columnDef.cell, cell.getContext())}
+			</TableCell>
+		))}
+	</TableRow>
+));
+MemoizedTableRow.displayName = "MemoizedTableRow";
 
 export default function DataTableDemo() {
 	const { data, fetchStudent } = studentStore((state) => ({
 		data: state.students,
 		fetchStudent: state.setAllStudents,
 	}));
-	const [loading, setLoading] = React.useState(false);
-	async function fetchRecord() {
-		await fetchStudent();
-	}
-	React.useEffect(() => {
-		fetchRecord();
-	}, []);
+	const [loading, setLoading] = useState(false);
+	const [sorting, setSorting] = useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+	const [rowSelection, setRowSelection] = useState({});
 
-	const [sorting, setSorting] = React.useState<SortingState>([]);
-	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-		[]
-	);
-	const [columnVisibility, setColumnVisibility] =
-		React.useState<VisibilityState>({});
-	const [rowSelection, setRowSelection] = React.useState({});
+	useEffect(() => {
+		const fetchRecord = async () => {
+			setLoading(true);
+			await fetchStudent();
+			setLoading(false);
+		};
+		fetchRecord();
+	}, [fetchStudent]);
 
 	const table = useReactTable({
 		data: data || [],
@@ -175,16 +180,39 @@ export default function DataTableDemo() {
 			rowSelection,
 		},
 	});
+	const handleSearchChange = useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
+			table.getColumn("name")?.setFilterValue(event.target.value);
+		},
+		[table]
+	);
+	const handleStatusFilterChange = useCallback(
+		(checked: boolean, status: string) => {
+			const prevFilter =
+				(table.getColumn("status")?.getFilterValue() as string[]) || [];
+			table
+				.getColumn("status")
+				?.setFilterValue(
+					checked
+						? [...prevFilter, status]
+						: prevFilter.filter((s) => s !== status)
+				);
+		},
+		[table]
+	);
+	const renderedRows = useMemo(() => {
+		return table.getRowModel().rows.map((row) => (
+			<MemoizedTableRow key={row.id} row={row} columns={table.getAllColumns()} />
+		));
+	}, [table,data]);
 
 	return (
-		<div className="w-full">
+		<div className="w-full relative">
 			<div className="flex items-center py-4">
 				<Input
 					placeholder="Search by name..."
 					value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-					onChange={(event) =>
-						table.getColumn("name")?.setFilterValue(event.target.value)
-					}
+					onChange={handleSearchChange}
 					className="max-w-sm"
 				/>
 				<DropdownMenu>
@@ -198,25 +226,14 @@ export default function DataTableDemo() {
 							<DropdownMenuCheckboxItem
 								key={status}
 								checked={
-									(
-										table.getColumn("status")?.getFilterValue() as
-											| string[]
-											| undefined
+									(table.getColumn("status")?.getFilterValue() as
+										| string[]
+										| undefined
 									)?.includes(status) ?? false
 								}
-								onCheckedChange={(checked) => {
-									const prevFilter =
-										(table.getColumn("status")?.getFilterValue() as
-											| string[]
-											| undefined) ?? [];
-									table
-										.getColumn("status")
-										?.setFilterValue(
-											checked
-												? [...prevFilter, status]
-												: prevFilter.filter((s) => s !== status)
-										);
-								}}
+								onCheckedChange={(checked) =>
+									handleStatusFilterChange(checked, status)
+								}
 							>
 								{status}
 							</DropdownMenuCheckboxItem>
@@ -233,27 +250,25 @@ export default function DataTableDemo() {
 						{table
 							.getAllColumns()
 							.filter((column) => column.getCanHide())
-							.map((column) => {
-								return (
-									<DropdownMenuCheckboxItem
-										key={column.id}
-										className="capitalize"
-										checked={column.getIsVisible()}
-										onCheckedChange={(value) =>
-											column.toggleVisibility(!!value)
-										}
-									>
-										{column.id}
-									</DropdownMenuCheckboxItem>
-								);
-							})}
+							.map((column) => (
+								<DropdownMenuCheckboxItem
+									key={column.id}
+									className="capitalize"
+									checked={column.getIsVisible()}
+									onCheckedChange={(value) =>
+										column.toggleVisibility(!!value)
+									}
+								>
+									{column.id}
+								</DropdownMenuCheckboxItem>
+							))}
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
 
 			<div className="rounded-md border">
 				{loading && (
-					<div className="absolute w-full h-gull bg-slate-900/40">
+					<div className="absolute top-0 left-0 w-full h-full bg-slate-900/70 z-30">
 						<Loader />
 					</div>
 				)}
@@ -261,38 +276,22 @@ export default function DataTableDemo() {
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead key={header.id}>
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-												  )}
-										</TableHead>
-									);
-								})}
+								{headerGroup.headers.map((header) => (
+									<TableHead key={header.id}>
+										{header.isPlaceholder
+											? null
+											: flexRender(
+													header.column.columnDef.header,
+													header.getContext()
+											  )}
+									</TableHead>
+								))}
 							</TableRow>
 						))}
 					</TableHeader>
 					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow
-									key={row.id}
-									data-state={row.getIsSelected() && "selected"}
-								>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext()
-											)}
-										</TableCell>
-									))}
-								</TableRow>
-							))
+						{renderedRows.length ? (
+							renderedRows
 						) : (
 							<TableRow>
 								<TableCell
@@ -305,7 +304,7 @@ export default function DataTableDemo() {
 						)}
 					</TableBody>
 					<TableFooter className="bg-transparent">
-						<div className="space-x-4  p-3 w-full">
+						<div className="space-x-4 p-3 w-full">
 							<Button
 								variant="outline"
 								size="sm"
