@@ -22,6 +22,7 @@ import { capitalizeWords } from "@/lib/Capitalize";
 export interface StudentWithId extends Student {
 	uid: string;
 	status?: boolean;
+	createdAt?: Date ;
 }
 
 interface StudentStore {
@@ -50,22 +51,26 @@ const studentStore = create<StudentStore>()(
 			totalStudents: 0,
 			lastAdmission: null,
 
-		setAllStudents: async () => {
-			if (get().students) return;
-			console.log("fetching students...");
+			setAllStudents: async () => {
+				if (get().students) {
+					return { success: true };
+				}
+				
+				console.log("fetching students...");
 			
-			try {
-				const querySnapshot = await getDocs(collection(db, "students"));
-				const students = querySnapshot.docs.map((doc) => ({
-					...doc.data(),
-					uid: doc.id,
-				})) as StudentWithId[];
-				set({ students, hydrated: true });
-			} catch (error) {
-				console.error("Error fetching students:", error);
-			}
-		},
-
+				try {
+					const querySnapshot = await getDocs(collection(db, "students"));
+					const students = querySnapshot.docs.map((doc) => ({
+						...doc.data(),
+						uid: doc.id,
+					})) as StudentWithId[];
+					set({ students, hydrated: true });
+					return { success: true };
+				} catch (error) {
+					console.error("Error fetching students:", error);
+					return { success: false, error: error as Error };
+				}
+			},
 			addStudent: async (student: StudentWithId) => {
 				try {
 					const colRef = collection(db, "students");
