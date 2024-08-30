@@ -58,17 +58,16 @@ function AddstudentForm({
 	const [disabled, setDisabled] = useState(false);
 	const form = useForm<z.infer<typeof studentFormSchema>>({
 		resolver: zodResolver(studentFormSchema),
+		defaultValues: defaultValue || {},
 	});
 	const { addStudent } = getStudentStore();
 	const { subjects } = getCourseStore();
-	const { universities } = universityStore(state=>({
-		universities: state.universities
+	const { universities } = universityStore((state) => ({
+		universities: state.universities,
 	}));
 
 	const onSubmit = React.useCallback(
 		async (values: z.infer<typeof studentFormSchema>) => {
-			console.log("kii");
-
 			console.log(values);
 			toast({
 				title: "Student added!",
@@ -225,7 +224,7 @@ function AddstudentForm({
 				{/* School/Collage */}
 				<FormField
 					control={form.control}
-					name="college"
+					name="studyAt"
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>School/Collage</FormLabel>
@@ -233,7 +232,7 @@ function AddstudentForm({
 								<RadioGroup
 									className="flex gap-3 mt-2 items-center justify-around"
 									onValueChange={(value) => {
-										field.onChange(value === "collage");
+										field.onChange(value);
 									}}
 								>
 									<FormItem className="flex items-center space-x-2">

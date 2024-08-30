@@ -53,24 +53,24 @@ const studentStore = create<StudentStore>()(
 
 			setAllStudents: async () => {
 				if (get().students) {
-					return { success: true };
+				  return { success: true };
 				}
-				
 				console.log("fetching students...");
-			
 				try {
-					const querySnapshot = await getDocs(collection(db, "students"));
-					const students = querySnapshot.docs.map((doc) => ({
-						...doc.data(),
-						uid: doc.id,
-					})) as StudentWithId[];
-					set({ students, hydrated: true });
-					return { success: true };
+				  const querySnapshot = await getDocs(collection(db, "students"));
+				  const students = querySnapshot.docs.map((doc) => ({
+					...doc.data(),
+					uid: doc.id,
+					admissionDate: doc.data().admissionDate.toDate(),
+				  })) as StudentWithId[];
+				  set({ students, hydrated: true });
+				  return { success: true };
 				} catch (error) {
-					console.error("Error fetching students:", error);
-					return { success: false, error: error as Error };
+				  console.error("Error fetching students:", error);
+				  return { success: false, error: error as Error };
 				}
-			},
+			  },
+
 			addStudent: async (student: StudentWithId) => {
 				try {
 					const colRef = collection(db, "students");

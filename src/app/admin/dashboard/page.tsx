@@ -1,12 +1,9 @@
 "use client";
-import React, { useEffect, lazy, Suspense, memo } from "react";
-import { coursesStore, getCourseStore } from "@/global/CoursesStore"; // Use the hook
-
-import { useUniversityStore,universityStore } from "@/global/Universitys"; // Use the hook
+import React, { lazy, Suspense, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { UserRoundPlus, CalendarPlus, Plus } from "lucide-react";
 import Dialog from "@/components/Dialog";
-
+const AddstudentForm = lazy(() => import("@/components/forms/AddstudentForm"));
 const TotalStudent = lazy(() => import("@/app/admin/components/TotalStudent"));
 const AllCourses = lazy(() => import("@/app/admin/components/AllCourses"));
 const AddTopers = lazy(() => import("@/components/forms/AddTopers"));
@@ -16,47 +13,47 @@ const RecentStudnets = lazy(
 );
 import Header from "@/components/layout/Header";
 import Container from "@/components/layout/Container";
-import { toast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddEventForm from "@/components/forms/AddEventForm";
 const ToperSection = lazy(() => import("../components/ToperSection"));
-const AddstudentForm = lazy(() => import("@/components/forms/AddstudentForm"));
-
-function AdminDashboard() {
-	const { allSubjects } = getCourseStore();
-	const { setUniversities } = useUniversityStore();
-	const { subjects } = coursesStore((state) => ({
-		subjects: state.subjects,
-	}));
-	const { universities } = universityStore((state) => ({
-		universities: state.universities,
-	}));
-
-	async function fetchAllSubjects() {
-		const response = await Promise.all([
-			allSubjects(),
-			setUniversities(),
-		]);
-		response.forEach((element) => {
-			if (element?.error) {
-				toast({
-					title: "Error",
-					description: `${element.error?.message}` || "Something went wrong",
-					variant: "destructive",
-				});
-			}
-		});
+import { StudentWithId } from "@/global/StudentsStore";
+export const AddStudentButton = memo(
+	({
+		data,
+		children,
+	}: {
+		data?: StudentWithId;
+		children: React.ReactNode;
+	}): React.ReactNode => {
+		console.log(data)
+		return (
+			<Dialog
+				content={
+					<Suspense fallback={<Skeleton className="w-full h-96" />}>
+						<AddstudentForm defaultValue={data} />
+					</Suspense>
+				}
+				title="New Student"
+			>
+				{children}
+			</Dialog>
+		);
 	}
-
-	useEffect(() => {
-		if (!subjects||!universities) {
-			fetchAllSubjects();
-		}
-	}, []);
-
+);
+AddStudentButton.displayName = "AddStudentButton";
+function AdminDashboard() {
 	return (
 		<div>
 			<Header>
+				<AddStudentButton>
+					<Button
+						variant="default"
+						className="flex font-semibold gap-2 text-primary bg-blue-500 hover:bg-blue-600"
+					>
+						<UserRoundPlus />
+						<span>Add Student</span>
+					</Button>
+				</AddStudentButton>
 				<Dialog
 					content={
 						<Suspense fallback={<Skeleton className="w-full h-96" />}>

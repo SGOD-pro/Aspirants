@@ -10,7 +10,7 @@ export const studentFormSchema = z.object({
 	payment: z.string().optional(),
 
 	institutionName: z.string(),
-	college:z.boolean(),
+	studyAt:z.string(),
 	university: z.string(),
 	address:z.string().optional(),
 	pin:z.number().optional(),
