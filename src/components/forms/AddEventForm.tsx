@@ -51,7 +51,7 @@ function AddEventForm({
 				title: "Success",
 				description: "Event added",
 			});
-			form.reset(); // Reset all form fields
+			form.reset();
 		}
 	}
 
@@ -65,7 +65,10 @@ function AddEventForm({
 						<FormItem>
 							<FormLabel>Content</FormLabel>
 							<FormControl>
-								<Textarea placeholder="Type your event here." {...field} />
+								<Textarea
+									placeholder="Type your event here."
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>

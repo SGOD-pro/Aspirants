@@ -27,22 +27,16 @@ function AddTopers() {
 	async function onSubmit(values: z.infer<typeof addTopersSchema>) {
 		console.log(values);
 		const response = await addToper(values);
-		if (response.success) {
-			toast({
-				title: "Toper added!",
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">
-							{JSON.stringify(values, null, 2)}
-						</code>
-					</pre>
-				),
-			});
-		} else {
+		if (!response.success) {
 			toast({
 				title: "Error",
 				description: "Something went wrong",
 				variant: "destructive",
+			});
+		} else {
+			toast({
+				title: "Success",
+				description: "Toper added",
 			});
 		}
 		form.reset();

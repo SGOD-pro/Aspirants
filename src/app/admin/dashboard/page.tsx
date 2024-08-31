@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { UserRoundPlus, CalendarPlus, Plus } from "lucide-react";
 import Dialog from "@/components/Dialog";
 const AddstudentForm = lazy(() => import("@/components/forms/AddstudentForm"));
+const AddTopers = lazy(() => import("@/components/forms/AddTopers"));
+const AddEventForm = lazy(() => import("@/components/forms/AddEventForm"));
 const TotalStudent = lazy(() => import("@/app/admin/components/TotalStudent"));
 const AllCourses = lazy(() => import("@/app/admin/components/AllCourses"));
-const AddTopers = lazy(() => import("@/components/forms/AddTopers"));
 const ShowEvent = lazy(() => import("@/app/admin/components/ShowEvent"));
 const RecentStudnets = lazy(
 	() => import("@/app/admin/components/RecentStudnets")
@@ -14,7 +15,6 @@ const RecentStudnets = lazy(
 import Header from "@/components/layout/Header";
 import Container from "@/components/layout/Container";
 import { Skeleton } from "@/components/ui/skeleton";
-import AddEventForm from "@/components/forms/AddEventForm";
 const ToperSection = lazy(() => import("../components/ToperSection"));
 import { StudentWithId } from "@/global/StudentsStore";
 export const AddStudentButton = memo(
@@ -25,12 +25,12 @@ export const AddStudentButton = memo(
 		data?: StudentWithId;
 		children: React.ReactNode;
 	}): React.ReactNode => {
-		console.log(data)
+		console.log(data);
 		return (
 			<Dialog
 				content={
 					<Suspense fallback={<Skeleton className="w-full h-96" />}>
-						<AddstudentForm defaultValue={data} id={data?.uid}/>
+						<AddstudentForm defaultValue={data} id={data?.uid} />
 					</Suspense>
 				}
 				title="New Student"
@@ -54,29 +54,29 @@ function AdminDashboard() {
 						<span>Add Student</span>
 					</Button>
 				</AddStudentButton>
+
 				<Dialog
 					content={
-						<Suspense fallback={<Skeleton className="w-full h-96" />}>
-							<AddstudentForm />
+						<Suspense fallback={<Skeleton className="w-full h-64" />}>
+							<AddEventForm />
 						</Suspense>
 					}
-					title="New Student"
+					title="Add Event"
 				>
-					<Button
-						variant="default"
-						className="flex font-semibold gap-2 text-primary bg-blue-500 hover:bg-blue-600"
-					>
-						<UserRoundPlus />
-						<span>Add Student</span>
-					</Button>
-				</Dialog>
-				<Dialog content={<AddEventForm />} title="Add Event">
 					<Button variant={"outline"} className="flex gap-2 items-center">
 						<span>Event</span>
 						<CalendarPlus />
 					</Button>
 				</Dialog>
-				<Dialog title="Our Topers" content={<AddTopers />}>
+
+				<Dialog
+					title="Our Topers"
+					content={
+						<Suspense fallback={<Skeleton className="w-full h-80" />}>
+							<AddTopers />
+						</Suspense>
+					}
+				>
 					<Button variant={"outline"} className="flex gap-2 items-center">
 						<span>Achivers</span>
 						<Plus />
