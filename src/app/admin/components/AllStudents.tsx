@@ -51,8 +51,9 @@ import {
 
 import Loader from "@/components/layout/Loader";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
-import { AddStudentButton } from "../dashboard/page";
+
 import { toast } from "@/components/ui/use-toast";
+import AddStudentButton from "./AddStudentBtn";
 
 const handleDelete = async (studentId: string) => {
 	try {

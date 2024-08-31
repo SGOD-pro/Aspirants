@@ -3,7 +3,7 @@ import React, { lazy, Suspense, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { UserRoundPlus, CalendarPlus, Plus } from "lucide-react";
 import Dialog from "@/components/Dialog";
-const AddstudentForm = lazy(() => import("@/components/forms/AddstudentForm"));
+
 const AddTopers = lazy(() => import("@/components/forms/AddTopers"));
 const AddEventForm = lazy(() => import("@/components/forms/AddEventForm"));
 const TotalStudent = lazy(() => import("@/app/admin/components/TotalStudent"));
@@ -15,32 +15,9 @@ const RecentStudnets = lazy(
 import Header from "@/components/layout/Header";
 import Container from "@/components/layout/Container";
 import { Skeleton } from "@/components/ui/skeleton";
+import AddStudentButton from "../components/AddStudentBtn";
 const ToperSection = lazy(() => import("../components/ToperSection"));
-import { StudentWithId } from "@/global/StudentsStore";
-export const AddStudentButton = memo(
-	({
-		data,
-		children,
-	}: {
-		data?: StudentWithId;
-		children: React.ReactNode;
-	}): React.ReactNode => {
-		console.log(data);
-		return (
-			<Dialog
-				content={
-					<Suspense fallback={<Skeleton className="w-full h-96" />}>
-						<AddstudentForm defaultValue={data} id={data?.uid} />
-					</Suspense>
-				}
-				title="New Student"
-			>
-				{children}
-			</Dialog>
-		);
-	}
-);
-AddStudentButton.displayName = "AddStudentButton";
+
 function AdminDashboard() {
 	return (
 		<div>
@@ -54,7 +31,6 @@ function AdminDashboard() {
 						<span>Add Student</span>
 					</Button>
 				</AddStudentButton>
-
 				<Dialog
 					content={
 						<Suspense fallback={<Skeleton className="w-full h-64" />}>

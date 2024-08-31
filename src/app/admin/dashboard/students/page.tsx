@@ -1,10 +1,10 @@
 import Container from "@/components/layout/Container";
 import Header from "@/components/layout/Header";
 import React, { lazy, Suspense } from "react";
-import { AddStudentButton } from "../page";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { UserRoundPlus } from "lucide-react";
+import AddStudentButton from "../../components/AddStudentBtn";
 const StudentTable = lazy(() => import("../../components/AllStudents"));
 function AllStudetnsPage() {
 	return (
