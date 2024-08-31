@@ -32,9 +32,6 @@ import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -254,7 +251,7 @@ export default function StudentTable() {
 	);
 
 	return (
-		<div className="w-full relative">
+		<div className="w-full relative px-3">
 			<div className="flex items-center py-4">
 				<Input
 					placeholder="Search by name..."
