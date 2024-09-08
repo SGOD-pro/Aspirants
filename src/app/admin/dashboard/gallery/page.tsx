@@ -13,7 +13,9 @@ function Gallery() {
 	return (
 		<>
 			<Header>
-				<Dialog content={<AddGallery />}>
+				<Dialog content={<Suspense fallback={<Skeleton className="h-full w-full" />}>
+						<AddGallery/>
+					</Suspense>}>
 					<Button variant={"outline"} size={"icon"} className="w-full sm:w-10 flex gap-3">
 						<IconPhotoPlus />
 						<div className="sm:hidden">Add Image</div>
