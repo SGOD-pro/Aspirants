@@ -14,9 +14,12 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { getAuthState,useAuthStore } from "@/global/AdminAuth";
-import { useRouter } from "next/navigation";
+import { getAuthState, useAuthStore } from "@/store/Auth";
+import { notFound, useRouter } from "next/navigation";
 import InputOTPForm from "./OtpValidation";
+import { LoaderCircle } from "lucide-react";
+import { MoveRight } from "lucide-react";
+import { toast } from "../ui/use-toast";
 function SignupForm() {
 	const { login } = getAuthState();
 	const [verify, setVerify] = React.useState(false);
@@ -27,13 +30,38 @@ function SignupForm() {
 	});
 
 	async function onSubmit(values: z.infer<typeof userSigninSchema>) {
-		console.log(values);
-		const response = await login(values.email, values.password, true);
-		if (!response.success && !response.isVerified) {
-			setVerify(true);
-		}
-		if (response.success) {
-			router.push("/");
+		try {
+			const response = await login(values.email, values.password);
+			if (response.error) {
+				toast({
+					title: "Invalid Credentials",
+					description: "User not found",
+					variant: "destructive",
+				});
+				return;
+			}
+			console.log(response.userPrefs);
+			if (!response.userPrefs?.isVerified) {
+				setVerify(true);
+				return;
+			}
+
+			const role = response.userPrefs?.role;
+			console.log(role);
+
+			switch (role) {
+				case "admin":
+					console.log("admin login");
+					router.push("/admin/dashboard");
+					break;
+				case "student":
+					router.push("/student");
+				default:
+					router.push("/");
+					break;
+			}
+		} catch (error) {
+			notFound();
 		}
 	}
 
@@ -85,10 +113,17 @@ function SignupForm() {
 						)}
 					/>
 					<button
-						className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] mt-4"
+						className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600  dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset] mt-4 flex items-center justify-center"
 						type="submit"
+						disabled={form.formState.isSubmitting}
 					>
-						Sign In &rarr;
+						{form.formState.isSubmitting ? (
+							<LoaderCircle className=" animate-spin" />
+						) : (
+							<p className="flex gap-2 transition-all items-center hover:gap-5 justify-center">
+								Sign in <MoveRight />
+							</p>
+						)}
 						<BottomGradient />
 					</button>
 				</form>

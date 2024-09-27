@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
 import FileInput from "../ui/FileInput";
 import { toast } from "../ui/use-toast";
-import { useUniversityStore } from "@/global/Universitys";
+import { useUniversityStore } from "@/store/Universitys";
 function AddTopers() {
 	const { addUniversity } = useUniversityStore();
 	const form = useForm<z.infer<typeof universitySchema>>({
@@ -116,7 +116,7 @@ const [key, setKey] = React.useState(0)
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Submit</Button>
+				<Button type="submit" disabled={form.formState.isSubmitting}>Submit</Button>
 			</form>
 		</Form>
 	);

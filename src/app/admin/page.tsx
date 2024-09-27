@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tranquiluxe } from "uvcanvas";
-import { getAuthState } from "@/global/AdminAuth";
+import { getAuthState } from "@/store/Auth";
 import { useRouter } from "next/navigation";
 import React, {  useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -30,7 +30,7 @@ function AdminLogin() {
 	async function onSubmit(values: z.infer<typeof loginSchema>) {
 		const { email, password } = values;
 		setDisable(true);
-		const response = await login(email, password,false);
+		const response = await login(email, password);
 		if (response.success) {
 			console.log("Success", response);
 			route.push("/admin/dashboard");

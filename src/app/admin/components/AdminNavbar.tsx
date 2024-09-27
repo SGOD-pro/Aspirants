@@ -11,7 +11,7 @@ import {
 	LayoutPanelLeft,
 	Image,
 } from "lucide-react";
-import { getAuthState } from "@/global/AdminAuth";
+import { getAuthState } from "@/store/Auth";
 import { useToast } from "@/components/ui/use-toast";
 import { usePathname, useRouter } from "next/navigation";
 const links = [

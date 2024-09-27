@@ -9,7 +9,7 @@ import {
 	CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-import { ToperSchemaWithId } from "@/global/Topers";
+import { ToperSchemaWithId } from "@/store/Topers";
 function CarouselPlugin({ topers }: { topers: ToperSchemaWithId[] }) {
 	const plugin = React.useRef(Autoplay({ delay: 5000 }));
 

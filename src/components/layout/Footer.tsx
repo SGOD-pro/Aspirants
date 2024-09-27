@@ -34,12 +34,12 @@ function Footer() {
 					<p className="font-light">
 						Contact no:{" "}
 						<Link type="tel" href="tel:+919999999999" className="underline">
-							+91 9999999999
+							+91 89676 65652
 						</Link>
 					</p>
 					<Link
 						target="_blank"
-						href="/"
+						href="https://maps.app.goo.gl/ykAZqUKAMUXaQda49"
 						className="font-light flex items-center gap-2 justify-center sm:justify-normal underline mt-3 md:mt-0"
 					>
 						View on map <IconGps />

@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { motion, MotionProps } from "framer-motion";
-import getAnimationColtrolStore from "@/global/Animation";
+import getAnimationColtrolStore from "@/store/Animation";
 
 // Memoized AnimatedElement to prevent unnecessary re-renders
 // Define the props for the AnimatedElement component

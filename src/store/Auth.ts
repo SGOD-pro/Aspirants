@@ -24,6 +24,7 @@ export interface UserPrefs {
 	isAdmin?: boolean;
 	isStudent?: boolean;
 	isVerified?: boolean;
+	role: "normal" | "admin" | "student" | null;
 }
 
 interface AdminAuth {
@@ -34,20 +35,23 @@ interface AdminAuth {
 	verifySession(): Promise<void>;
 	login(
 		email: string,
-		password: string,
-		isStudent: boolean
-	): Promise<{ success: boolean; error?: Error; isVerified?: boolean }>;
+		password: string
+	): Promise<{ success: boolean; error?: Error; userPrefs?: UserPrefs }>;
 	createAccount(
 		email: string,
 		password: string
-	): Promise<{ success: boolean; error?: Error; isVerified?: boolean }>;
+	): Promise<{ success: boolean; error?: Error; userPrefs?: UserPrefs }>;
 	logout(): Promise<{ success: boolean; error?: Error }>;
-	signInWithGoogle(): Promise<{ success: boolean; error?: Error }>;
+	signInWithGoogle(): Promise<{
+		success: boolean;
+		error?: Error;
+		userPrefs?: UserPrefs;
+	}>;
 }
 
 export const useAuthStore = create<AdminAuth>()(
 	persist(
-		immer((set) => ({
+		immer((set, get) => ({
 			user: null,
 			userPrefs: null,
 			hydrated: false,
@@ -64,15 +68,16 @@ export const useAuthStore = create<AdminAuth>()(
 							const userDoc = await getDoc(userDocRef);
 							if (userDoc.exists()) {
 								set({ user, userPrefs: userDoc.data() as UserPrefs });
-								if (userDoc.data()?.isAdmin) {
+								if (!userDoc.data()?.isVerified) {
+									console.log("admin available");
 									set({ user: null, userPrefs: null });
+									get().logout();
 								}
 								console.log(userDoc.data());
 							} else {
 								set({ user, userPrefs: null });
 							}
 						} else {
-							console.log("no user");
 							set({ user: null, userPrefs: null });
 						}
 						set({ hydrated: true });
@@ -94,7 +99,9 @@ export const useAuthStore = create<AdminAuth>()(
 
 					await setDoc(doc(db, "users", user.uid), {
 						isVerified: false,
+						role: null,
 					} as UserPrefs);
+					console.log("sending otp");
 
 					const response = await fetch("/api/send-otp", {
 						method: "POST",
@@ -103,6 +110,7 @@ export const useAuthStore = create<AdminAuth>()(
 						},
 						body: JSON.stringify({ email, uid: user.uid }),
 					});
+
 					if (response.status > 200) {
 						return {
 							success: false,
@@ -110,11 +118,10 @@ export const useAuthStore = create<AdminAuth>()(
 						};
 					}
 
-					set({ user, userPrefs: { isVerified: false } });
-
+					set({ user, userPrefs: { isVerified: false, role: "normal" } });
+					get().setHydrated();
 					return { success: true, user };
 				} catch (error: any) {
-					// Handle errors, such as if the user already exists
 					if (error.code === "auth/email-already-in-use") {
 						return {
 							success: false,
@@ -125,18 +132,19 @@ export const useAuthStore = create<AdminAuth>()(
 				}
 			},
 
-			async login(email: string, password: string, isStudent: boolean) {
+			async login(email: string, password: string) {
 				try {
 					const userCredential = await signInWithEmailAndPassword(
 						auth,
 						email,
 						password
 					);
+					console.log("user login");
 					const user = userCredential.user;
 					const userDocRef = doc(db, "users", user.uid);
 					const userDoc = await getDoc(userDocRef);
 					const data = userDoc.data();
-
+					console.log(data);
 					if (!data?.isVerified) {
 						await signOut(auth);
 						return {
@@ -145,9 +153,10 @@ export const useAuthStore = create<AdminAuth>()(
 							isVerified: false,
 						};
 					}
-
-					set({ user, userPrefs: data });
-					return { success: true };
+					console.log({ user, userPrefs: data });
+					set({ user, userPrefs: data as UserPrefs });
+					get().setHydrated();
+					return { success: true, userPrefs: data as UserPrefs };
 				} catch (error) {
 					console.log(error);
 					return { success: false, error: error as Error };
@@ -164,12 +173,13 @@ export const useAuthStore = create<AdminAuth>()(
 					if (!userDoc.exists()) {
 						await setDoc(doc(db, "users", user.uid), {
 							isVerified: true,
+							role: "normal",
 						} as UserPrefs);
-						set({ user, userPrefs: { isVerified: true } });
+						set({ user, userPrefs: { isVerified: true, role: "normal" } });
 					} else {
-						set({ user, userPrefs: userDoc.data() });
+						set({ user, userPrefs: userDoc.data() as UserPrefs });
 					}
-					return { success: true };
+					return { success: true, role: userDoc.data()?.role || "normal" };
 				} catch (error) {
 					console.error("Error during Google Sign-In:", error);
 					return { success: false, error: error as Error };

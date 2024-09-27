@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import React, { memo } from "react";
-import { getEventStore, useEventStore } from "@/global/Event";
+import { getEventStore, useEventStore } from "@/store/Event";
 import { toast } from "@/components/ui/use-toast";
 
 function ShowEvent() {

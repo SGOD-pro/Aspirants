@@ -33,6 +33,7 @@ export async function POST(req: Request, res: Response) {
 				isVerified: true,
 				otp: null,
 				validTime: null,
+				role:"normal"
 			});
 			return Response.json({ message: "Valid OTP" }, { status: 200 });
 		} else {

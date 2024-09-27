@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useGalleryStore } from "@/global/GalleryStore";
+import { useGalleryStore } from "@/store/GalleryStore";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -74,7 +74,7 @@ const [disable, setDisable] = React.useState(false)
 					)}
 				/>
 				<Button type="submit"
-				disabled={disable}>Submit</Button>
+				disabled={form.formState.isSubmitting}>Submit</Button>
 			</form>
 		</Form>
 	);

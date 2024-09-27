@@ -41,13 +41,13 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
-import { getStudentStore } from "@/global/StudentsStore";
-import { getCourseStore } from "@/global/CoursesStore";
+import { getStudentStore } from "@/store/StudentsStore";
+import { getCourseStore } from "@/store/CoursesStore";
 import { toast } from "../ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Dialog from "@/components/Dialog";
 const AddUniversity = lazy(() => import("@/components/forms/AddUniversity"));
-import { universityStore } from "@/global/Universitys";
+import { universityStore } from "@/store/Universitys";
 import { Skeleton } from "../ui/skeleton";
 
 function AddstudentForm({
@@ -393,7 +393,7 @@ function AddstudentForm({
 						</FormItem>
 					)}
 				/>
-				<Button type="submit" disabled={disabled}>
+				<Button type="submit" disabled={form.formState.isSubmitting}>
 					Submit
 				</Button>
 				<FormDescription className="col-start-1 col-end-3 text-center">

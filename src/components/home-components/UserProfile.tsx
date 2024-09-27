@@ -1,20 +1,38 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { getAuthState } from "@/global/AdminAuth";
+import { useAuthStore } from "@/store/Auth";
 import { User } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "../ui/use-toast";
 
 function UserProfile() {
-	const { user } = getAuthState();
+	const {  logout, user } = useAuthStore((state) => ({
+		logout: state.logout,
+		user: state.user,
+	}));
 	const [isMounted, setIsMounted] = useState(false);
-
+	const [logingout, setLogingout] = useState(false);
+	const router=useRouter()
+	const userLogout = async () => {
+		setLogingout(true);
+		const response = await logout();
+		setLogingout(false);
+		if (response.error) {
+			toast({
+				title: "Error",
+				description: `${response.error}`,
+				variant: "destructive",
+			});
+		} else {
+			router.push("/login");
+		}
+	};
 	useEffect(() => {
 		setIsMounted(true);
 	}, []);
@@ -41,7 +59,7 @@ function UserProfile() {
 				<h2 className="text-2xl">{user?.displayName}</h2>
 				<p className="text-xs">{user?.email}</p>
 				<div className="text-right">
-					<Button variant={"destructive"}>Logout</Button>
+					<Button variant={"destructive"} onClick={userLogout} disabled={logingout}>Logout</Button>
 				</div>
 			</PopoverContent>
 		</Popover>

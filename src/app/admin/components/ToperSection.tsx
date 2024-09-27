@@ -6,7 +6,7 @@ const CarouselPlugin = lazy(
 	() => import("@/app/admin/components/AdminCarousel")
 );
 const ShowTopers = lazy(() => import("@/app/admin/components/ShowTopers"));
-import { toperStore } from "@/global/Topers";
+import { toperStore } from "@/store/Topers";
 import { Fullscreen } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 

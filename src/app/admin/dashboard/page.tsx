@@ -24,8 +24,8 @@ function AdminDashboard() {
 			<Header>
 				<AddStudentButton>
 					<Button
-						variant="default"
-						className="flex font-semibold gap-2 text-primary bg-blue-500 hover:bg-blue-600"
+						
+						className="flex font-semibold gap-2 text-primary bg-blue-500 hover:bg-blue-600 text-white"
 					>
 						<UserRoundPlus />
 						<span>Add Student</span>

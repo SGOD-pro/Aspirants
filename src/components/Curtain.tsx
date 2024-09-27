@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import WordFadeIn from "../components/ui/text-generator";
 import { motion } from "framer-motion";
-import { animationControl } from "@/global/Animation";
+import { animationControl } from "@/store/Animation";
 import { usePathname } from "next/navigation";
 function Curtain() {
 	const [animationComplete, setAnimationComplete] = useState(false);

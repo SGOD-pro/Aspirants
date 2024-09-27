@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { getCourseStore } from "@/global/CoursesStore";
+import { getCourseStore } from "@/store/CoursesStore";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -71,7 +71,7 @@ export default function Addsubject() {
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Submit</Button>
+				<Button type="submit" disabled={form.formState.isSubmitting}>Submit</Button>
 			</form>
 		</Form>
 	);

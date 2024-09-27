@@ -20,7 +20,8 @@ import {
 	InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { toast } from "@/components/ui/use-toast";
-import { getAuthState } from "@/global/AdminAuth";
+import { getAuthState } from "@/store/Auth";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
 	pin: z.string().min(6, {
@@ -29,6 +30,7 @@ const FormSchema = z.object({
 });
 
 export default function InputOTPForm() {
+	const router = useRouter();
 	const { user } = getAuthState();
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -45,19 +47,23 @@ export default function InputOTPForm() {
 			});
 		}
 		try {
-			const response=await fetch("/api/verify-otp", {
+			const response: any = await fetch("/api/verify-otp", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({ otp: data.pin, uid: user.uid }),
 			});
-			if(response.ok){
+			console.log(response);
+
+			if (!response.ok) {
 				toast({
-					title: "Success",
-					description: "OTP verified",
+					title: "Cannot verify",
+					description: "Invalid OTP or expired",
 				});
+				return;
 			}
+			router.push("/");
 		} catch (error) {
 			toast({
 				title: "Cannot verify",
@@ -94,7 +100,9 @@ export default function InputOTPForm() {
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Verify</Button>
+				<Button type="submit" disabled={form.formState.isSubmitting}>
+					Verify
+				</Button>
 			</form>
 		</Form>
 	);

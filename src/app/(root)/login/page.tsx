@@ -6,8 +6,8 @@ import { IconBrandGoogle, IconBrandApple } from "@tabler/icons-react";
 const SigninForm = lazy(() => import("@/components/forms/UserSignin"));
 const SignupForm = lazy(() => import("@/components/forms/UserSignup"));
 import { BackgroundGradientAnimation } from "@/components/ui/gradient-background";
-import { getAuthState } from "@/global/AdminAuth";
-import { useRouter } from "next/navigation";
+import { getAuthState } from "@/store/Auth";
+import { notFound, useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -15,15 +15,19 @@ export default function TabsDemo() {
 	const router = useRouter();
 	const { signInWithGoogle } = getAuthState();
 	const GoogleSignin = async () => {
-		const response = await signInWithGoogle();
-		if (response.success) {
-			router.push("/");
-		} else {
-			toast({
-				title: "Invalid Credentials",
-				description: `${response?.error}` || "Something went wrong",
-				variant: "destructive",
-			});
+		try {
+			const response = await signInWithGoogle();
+			if (response.success) {
+				router.push("/");
+			} else {
+				toast({
+					title: "Invalid Credentials",
+					description: `${response?.error}` || "Something went wrong",
+					variant: "destructive",
+				});
+			}
+		} catch (error) {
+			notFound();
 		}
 	};
 	return (

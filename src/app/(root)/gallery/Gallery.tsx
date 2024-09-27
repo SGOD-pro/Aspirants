@@ -1,8 +1,8 @@
 import BlurFade from "@/components/ui/blur-fade";
-import { useGalleryStore } from "@/global/GalleryStore";
+import { useGalleryStore } from "@/store/GalleryStore";
 import { Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/global/AdminAuth";
+import { useAuthStore } from "@/store/Auth";
 import React, { memo } from "react";
 import Loader from "@/components/layout/Loader";
 import Image from "next/image";

@@ -27,7 +27,7 @@ import {
 } from "@tanstack/react-table";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { studentStore, StudentWithId } from "@/global/StudentsStore";
+import { studentStore, StudentWithId } from "@/store/StudentsStore";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,

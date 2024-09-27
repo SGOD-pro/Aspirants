@@ -1,6 +1,6 @@
 .container {
-	--uib-size: 40px;
-	--uib-color: black;
+	--uib-size: 20px;
+	--uib-color: #4338ca;
 	--uib-speed: 2s;
 	--uib-bg-opacity: 0;
 	height: var(--uib-size);
@@ -8,6 +8,7 @@
 	transform-origin: center;
 	animation: rotate var(--uib-speed) linear infinite;
 	will-change: transform;
+	border: 1px solid red;
 	overflow: visible;
 }
 

@@ -25,10 +25,10 @@ import Dialog from "@/components/Dialog";
 const Addsubject = lazy(() => import("@/components/forms/Addsubject"));
 const AddUniversity = lazy(() => import("@/components/forms/AddUniversity"));
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { getCourseStore } from "@/global/CoursesStore";
+import { getCourseStore } from "@/store/CoursesStore";
 import { toast } from "../ui/use-toast";
 import { CirclePlus } from "lucide-react";
-import { universityStore } from "@/global/Universitys";
+import { universityStore } from "@/store/Universitys";
 import { Skeleton } from "../ui/skeleton";
 
 function AddCourses({
@@ -282,7 +282,7 @@ function AddCourses({
 					/>
 				</div>
 
-				<Button type="submit" disabled={disabled} className="mt-0">
+				<Button type="submit" disabled={form.formState.isSubmitting} className="mt-0">
 					Submit
 				</Button>
 			</form>

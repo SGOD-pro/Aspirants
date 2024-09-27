@@ -2,7 +2,7 @@
 import React, { memo, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { FilePenLine, Plus, Trash2 } from "lucide-react";
-import { coursesStore,CourseWithId } from "@/global/CoursesStore";
+import { coursesStore,CourseWithId } from "@/store/CoursesStore";
 import {
   Table,
   TableBody,

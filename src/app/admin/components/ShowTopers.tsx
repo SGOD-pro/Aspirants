@@ -10,7 +10,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toperStore } from "@/global/Topers";
+import { toperStore } from "@/store/Topers";
 import Image from "next/image";
 
 function ShowTopers() {

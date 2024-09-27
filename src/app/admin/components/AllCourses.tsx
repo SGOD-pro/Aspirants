@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { LibraryBig } from "lucide-react";
-import { coursesStore } from "@/global/CoursesStore";
+import { coursesStore } from "@/store/CoursesStore";
 import Link from "next/link";
 
 function AllCourses() {

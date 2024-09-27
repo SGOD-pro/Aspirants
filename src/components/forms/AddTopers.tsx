@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
 import FileInput from "../ui/FileInput";
 import { toast } from "../ui/use-toast";
-import getTopersStore from "@/global/Topers";
+import getTopersStore from "@/store/Topers";
 function AddTopers() {
 	const form = useForm<z.infer<typeof addTopersSchema>>({
 		resolver: zodResolver(addTopersSchema),
@@ -94,7 +94,7 @@ function AddTopers() {
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Submit</Button>
+				<Button type="submit" disabled={form.formState.isSubmitting}>Submit</Button>
 			</form>
 		</Form>
 	);

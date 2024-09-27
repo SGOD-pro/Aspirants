@@ -1,7 +1,7 @@
 "use client";
 import React, { lazy, Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuthStore } from "@/global/AdminAuth";
+import { useAuthStore } from "@/store/Auth";
 const LandingPage = lazy(() => import("@/components/home-components/Section1"));
 const WhySection = lazy(
 	() => import("@/components/home-components/Why-section")

@@ -2,15 +2,15 @@
 import Link from "next/link";
 import { motion } from "framer-motion"; // Import Framer Motion
 import { useState, useEffect, useRef, memo } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { IconMenu3, IconX } from "@tabler/icons-react";
 import { Headset } from "lucide-react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
-import { useAuthStore } from "@/global/AdminAuth";
+import { useAuthStore } from "@/store/Auth";
 import { LogOut } from "lucide-react";
-import { Button } from "./button";
+import { Button } from "../ui/button";
 import Loader from "@/app/loading";
-import { toast } from "./use-toast";
+import { toast } from "../ui/use-toast";
 import UserProfile from "../home-components/UserProfile";
 
 const NAV_ITEMS = [
@@ -23,22 +23,59 @@ const NAV_ITEMS = [
 function Navbar() {
 	const pathname = usePathname();
 	const { scrollY } = useScroll();
-	const [isScrolled, setIsScrolled] = useState(false);
+	const [isScrolled, setIsScrolled] = useState(true);
 	const [showNav, setShowNav] = useState(false);
 	const [isMobileView, setIsMobileView] = useState(false);
+	const [userPrefState, setUserPrefs] = useState<any>();
+	const [logingout, setLogingout] = useState(false);
 
+	const prevScrollY = useRef(0);
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	const { userPrefs, logout, user } = useAuthStore((state) => ({
+		userPrefs: state.userPrefs,
+		logout: state.logout,
+		user: state.user,
+	}));
+
+	// Scroll handling logic
 	useMotionValueEvent(scrollY, "change", (latest) => {
-		setIsScrolled(latest > 150);
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
+
+		setIsScrolled(latest < prevScrollY.current); // true if scrolling up, false if down
+		prevScrollY.current = latest;
+
+		// Set timeout for inactivity detection
+		timeoutRef.current = setTimeout(() => {
+			if (prevScrollY.current !== 0) {
+				setIsScrolled(false);
+			}
+		}, 5000);
 	});
 
+	// Cleanup for scroll timeout
+	useEffect(() => {
+		return () => {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
+		};
+	}, []);
+
+	// Window resize handling
 	useEffect(() => {
 		const handleResize = () => {
 			setIsMobileView(window.innerWidth <= 640);
 		};
-		handleResize();
+
+		handleResize(); // Set initial value
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
+
+	// Click handling to hide navigation
 	useEffect(() => {
 		const handleClick = (event: MouseEvent) => {
 			if ((event.target as HTMLElement).tagName === "A") {
@@ -47,19 +84,13 @@ function Navbar() {
 		};
 
 		document.addEventListener("click", handleClick);
-
 		return () => {
 			document.removeEventListener("click", handleClick);
 		};
 	}, []);
-	const [userPrefState, setUserPrefs] = useState<any>();
-	const { userPrefs, logout, user } = useAuthStore((state) => ({
-		userPrefs: state.userPrefs,
-		logout: state.logout,
-		user: state.user,
-	}));
 
-	const [logingout, setLogingout] = useState(false);
+	// User logout handling
+	const router=useRouter()
 	const userLogout = async () => {
 		setLogingout(true);
 		const response = await logout();
@@ -70,12 +101,17 @@ function Navbar() {
 				description: `${response.error}`,
 				variant: "destructive",
 			});
+		} else {
+			router.push("/login");
 		}
 	};
 
+	// Set user preferences when they change
 	useEffect(() => {
 		setUserPrefs(userPrefs);
 	}, [userPrefs]);
+
+	// Animation variants
 	const containerVariants = {
 		hidden: { opacity: 1 },
 		visible: {
@@ -90,6 +126,8 @@ function Navbar() {
 		hidden: { y: -5, opacity: 0, filter: "blur(10px)" },
 		visible: { y: 0, opacity: 1, filter: "blur(0px)" },
 	};
+
+	// Loader display while logging out
 	if (logingout) {
 		return <Loader />;
 	}
@@ -98,17 +136,17 @@ function Navbar() {
 			<div className="fixed right-0 top-0 -translate-x-full translate-y-full sm:hidden border p-2 rounded-full backdrop-blur bg-slate-950/10 z-50">
 				<IconMenu3 onClick={() => setShowNav(true)} />
 			</div>
-			{user&&<div className="fixed top-5 right-8 z-50 hidden sm:block">
-				<UserProfile />
-			</div>}
+			{user && (
+				<div className="fixed top-5 right-8 z-50 hidden sm:block">
+					<UserProfile />
+				</div>
+			)}
 			<nav
-				className={`h-[100dvh] w-screen sm:h-fit sm:w-[80%] border p-10 sm:p-4 sm:px-5 backdrop-blur sm:bg-slate-950/40 bg-slate-950/95 flex flex-col sm:flex-row sm:justify-between text-3xl sm:text-base sm:items-center gap-10 sm:gap-0 m-auto fixed z-50 right-0  ${
+				className={`h-[100dvh] w-screen sm:h-fit sm:w-[80%] border p-10 sm:p-4 sm:px-5 backdrop-blur sm:bg-slate-950/40 bg-slate-950/95 flex-col sm:flex-row sm:justify-between text-3xl sm:text-base sm:items-center gap-10 sm:gap-0 duration-1000 m-auto fixed z-50 right-0 rounded-b-3xl ${
 					showNav ? "translate-x-0" : "translate-x-full"
 				} sm:right-1/2 sm:translate-x-1/2 transition-all top-0 ${
-					isScrolled
-						? "sm:translate-y-1/2 sm:rounded-full sm:rounded-b-full"
-						: "sm:-translate-y-0 sm:rounded-none sm:rounded-b-2xl"
-				} ${pathname.startsWith("/admin") ? "hidden" : "block"}`}
+					!isScrolled && !isMobileView ? "-translate-y-full" : "-translate-y-0"
+				} ${pathname.startsWith("/admin") ? "hidden" : "flex"}`}
 			>
 				<div className="sm:hidden text-right flex justify-end">
 					<IconX className="w-10 h-10" onClick={() => setShowNav(false)} />

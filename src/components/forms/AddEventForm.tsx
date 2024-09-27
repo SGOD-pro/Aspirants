@@ -23,7 +23,7 @@ import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { eventSchema } from "@/models/EventSchema";
 import { Textarea } from "@/components/ui/textarea";
-import { useEventStore } from "@/global/Event";
+import { useEventStore } from "@/store/Event";
 
 function AddEventForm({
 	defaultValue,
@@ -113,7 +113,7 @@ function AddEventForm({
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Submit</Button>
+				<Button type="submit" disabled={!form.formState.isValid}>Submit</Button>
 			</form>
 		</Form>
 	);

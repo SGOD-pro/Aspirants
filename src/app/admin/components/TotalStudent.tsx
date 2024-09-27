@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { UsersRound } from "lucide-react";
-import { studentStore } from "@/global/StudentsStore";
+import { studentStore } from "@/store/StudentsStore";
 import Link from "next/link";
 function TotalStudent() {
 	const { setTotalStudents, totalStudets } = studentStore((state) => ({
