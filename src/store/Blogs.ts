@@ -5,21 +5,28 @@ import {
 	DocumentReference,
 	collection,
 	getDocs,
+	getDoc,
+	doc,
 	QuerySnapshot,
 } from "firebase/firestore";
 import { db } from "@/config/client"; // Your Firestore instance
 
 interface BlogDetails {
 	data: BlogData;
-	content: string; // Markdown content or any other content
+	content?: string; // Markdown content or any other content
 }
-
+interface BlogWithId extends BlogDetails {
+	id: string;
+}
 interface BlogStore {
-	blogs: BlogDetails[] | null;
+	blogs: BlogWithId[] | null;
 	hydrated: boolean;
 	setHydrated: () => void;
 	readAllFilesFromStorage: () => Promise<void>;
 	addBlog: (blog: BlogDetails) => Promise<{ success: boolean; error?: Error }>;
+	getContent: (
+		id: string
+	) => Promise<{ success: boolean; error?: Error; content?: string }>;
 }
 
 export const useBlogStore = create<BlogStore>()(
@@ -42,11 +49,10 @@ export const useBlogStore = create<BlogStore>()(
 				const querySnapshot: QuerySnapshot = await getDocs(blogsCollectionRef);
 
 				// Transform the documents into an array of BlogDetails
-				const blogs: BlogDetails[] = querySnapshot.docs.map((doc) => {
+				const blogs: BlogWithId[] = querySnapshot.docs.map((doc) => {
 					const data = doc.data() as BlogData;
-					const content = data.content || ""; // Assuming content is stored in the document
-
 					return {
+						id: doc.id,
 						data: {
 							title: data.title,
 							description: data.description,
@@ -55,7 +61,6 @@ export const useBlogStore = create<BlogStore>()(
 							date: data.date,
 							tags: data.tags || [],
 						},
-						content: content,
 					};
 				});
 
@@ -94,14 +99,37 @@ export const useBlogStore = create<BlogStore>()(
 				// Step 3: Update Zustand state
 				set((state) => {
 					state.blogs = state.blogs
-						? [...state.blogs, { data, content }]
-						: [{ data, content }];
+						? [...state.blogs, { data, id: docId }]
+						: [{ data, id: docId }];
 				});
 
 				return { success: true };
 			} catch (error) {
 				console.error("Error adding blog:", error);
 				return { success: false, error: error as Error };
+			}
+		},
+		async getContent(id) {
+			try {
+				const docRef = doc(collection(db, "blogs"), id);
+				const docSnap = await getDoc(docRef);
+				if (docSnap.exists()) {
+					return {
+						success: true,
+						content: docSnap.data().content,
+					};
+				} else {
+					return {
+						success: false,
+						error: "No such document!",
+					};
+				}
+			} catch (error: any) {
+				console.error("Error fetching document:", error);
+				return {
+					success: false,
+					error: error.message, // Return the error message
+				};
 			}
 		},
 	}))

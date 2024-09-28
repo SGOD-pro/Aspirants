@@ -85,7 +85,7 @@ function SignupForm() {
 								<FormControl>
 									<Input
 										id="email"
-										placeholder="projectmayhem@fc.com"
+										placeholder="aspirantxyz@ac.com"
 										type="email"
 										{...field}
 									/>

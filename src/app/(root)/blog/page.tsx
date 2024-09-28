@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import getAnimationControlStore from "@/store/Animation";
 import { Search } from "lucide-react";
-import Blogs from "@/components/Blogs";
+import Blogs from "@/components/BlogCards";
 
 // Where Inspiration Meets Information
 function BlogsPage() {
@@ -57,7 +57,7 @@ function BlogsPage() {
 						<Search />
 					</button>
 				</form>
-				<Blogs />
+				<Blogs className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1 lg:p-4"/>
 			</div>
 		</div>
 	);

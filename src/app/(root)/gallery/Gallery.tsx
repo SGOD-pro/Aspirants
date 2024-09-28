@@ -30,7 +30,7 @@ function BlurFadeDemo() {
 			console.log("No images found, fetching more...");
 			fetchMore(1);
 		}
-	}, [images]);
+	}, []);
 
 	if (loading) {
 		return (

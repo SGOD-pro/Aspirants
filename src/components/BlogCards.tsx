@@ -7,22 +7,23 @@ import { useBlogStore } from "@/store/Blogs";
 import { Button } from "./ui/button";
 import { Trash } from "lucide-react";
 Trash;
-function Blogs() {
+function Blogs({className}:{className:string}) {
 	const { blogs, readAllFilesFromStorage } = useBlogStore((state) => ({
 		blogs: state.blogs,
 		readAllFilesFromStorage: state.readAllFilesFromStorage,
 	}));
+	console.log(blogs);
 	useEffect(() => {
 		async function fetch() {
-			if (!blogs) await readAllFilesFromStorage();
+			if (!blogs){console.log("fetching blogs"); await readAllFilesFromStorage()};
 		}
 		fetch();
 	}, []);
 
 	return (
-		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 p-4 lg:p-6">
+		<div className={`grid ${className}`}>
 			{blogs?.map((blog) => (
-				<CardContainer className="inter-var">
+				<CardContainer className="inter-var" key={blog.data.title}>
 					<CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto  h-auto rounded-xl p-6 border flex flex-col justify-between">
 						<CardItem
 							translateZ="50"
@@ -61,7 +62,7 @@ function Blogs() {
 								as="button"
 								className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold"
 							>
-								<Link href={"#"}>Read More</Link>
+								<Link href={`/blog/${blog.id}`}>Read More</Link>
 							</CardItem>
 						</div>
 					</CardBody>

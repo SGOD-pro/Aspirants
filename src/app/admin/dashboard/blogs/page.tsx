@@ -16,7 +16,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import blogShema, { blogDataSchema } from "@/models/BlogSchema";
 import { Button } from "@/components/ui/button";
-import Blogs from "@/components/Blogs";
+import Blogs from "@/components/BlogCards";
 import { Skeleton } from "@/components/ui/skeleton";
 import FileInput from "@/components/ui/FileInput";
 import { readFileContent } from "@/lib/ReadFile";
@@ -43,7 +43,7 @@ function BlogForm() {
 				</Dialog>
 			</Header>
 			<Container>
-				<Blogs />
+				<Blogs className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1 lg:p-4"/>
 			</Container>
 		</div>
 	);

@@ -12,7 +12,7 @@ function InstractorSection() {
 					<Image
 						width={300}
 						height={300}
-						src="/instructor.jpg"
+						src="/arnab.png"
 						alt={"linear board demo"}
 						className="h-full w-full object-cover object-top  rounded-xl saturate-125 contrast-125"
 					></Image>

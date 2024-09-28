@@ -13,7 +13,6 @@ export const metadata: Metadata = {
 import Curtain from "@/components/Curtain";
 import Navbar from "@/components/layout/Navbar";
 import Main from "./Main";
-
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -21,6 +20,7 @@ export default function RootLayout({
 	notFound?: boolean;
 	error?: boolean;
 }>) {
+	
 	return (
 		<html lang="en">
 			<body
