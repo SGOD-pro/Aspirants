@@ -142,7 +142,7 @@ function Navbar() {
 				</div>
 			)}
 			<nav
-				className={`h-[100dvh] w-screen sm:h-fit sm:w-[80%] border p-10 sm:p-4 sm:px-5 backdrop-blur sm:bg-slate-950/40 bg-slate-950/95 flex-col sm:flex-row sm:justify-between text-3xl sm:text-base sm:items-center gap-10 sm:gap-0 duration-1000 m-auto fixed z-50 right-0 rounded-b-3xl ${
+				className={`h-dvh w-screen sm:h-fit sm:w-[80%] border p-10 sm:p-4 sm:px-5 backdrop-blur sm:bg-slate-950/40 bg-slate-950/95 flex-col sm:flex-row sm:justify-between text-3xl sm:text-base sm:items-center gap-10 sm:gap-0 duration-700 m-auto fixed z-50 right-0 rounded-b-3xl ${
 					showNav ? "translate-x-0" : "translate-x-full"
 				} sm:right-1/2 sm:translate-x-1/2 transition-all top-0 ${
 					!isScrolled && !isMobileView ? "-translate-y-full" : "-translate-y-0"

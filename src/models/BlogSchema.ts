@@ -19,7 +19,7 @@ export default blogShema;
 const blogDataSchema = z
 	.object({
 		title: z.string(),
-		description: z.string().max(80, { message: "Description is too long" }).min(10, { message: "Description is too short" }),
+		description: z.string().max(120, { message: "Description is too long" }).min(10, { message: "Description is too short" }),
 		image: z.string(),
 		slug: z.string(),
 		date: z.string(), // You can add further validation for date format if necessary

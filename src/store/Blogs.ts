@@ -7,7 +7,10 @@ import {
 	getDocs,
 	getDoc,
 	doc,
+	deleteDoc,
 	QuerySnapshot,
+	query,
+	where,
 } from "firebase/firestore";
 import { db } from "@/config/client"; // Your Firestore instance
 
@@ -15,7 +18,7 @@ interface BlogDetails {
 	data: BlogData;
 	content?: string; // Markdown content or any other content
 }
-interface BlogWithId extends BlogDetails {
+export interface BlogWithId extends BlogDetails {
 	id: string;
 }
 interface BlogStore {
@@ -24,6 +27,10 @@ interface BlogStore {
 	setHydrated: () => void;
 	readAllFilesFromStorage: () => Promise<void>;
 	addBlog: (blog: BlogDetails) => Promise<{ success: boolean; error?: Error }>;
+	deleteBlog: (id: string) => Promise<{ success: boolean; error?: Error }>;
+	searchBlogsByTitle: (
+		title: string
+	) => Promise<{ success: boolean; blogs?: BlogWithId[]; error?: Error }>;
 	getContent: (
 		id: string
 	) => Promise<{ success: boolean; error?: Error; content?: string }>;
@@ -132,5 +139,50 @@ export const useBlogStore = create<BlogStore>()(
 				};
 			}
 		},
+		deleteBlog: async (id: string) => {
+			try {
+				await deleteDoc(doc(db, "blogs", id));
+				set((state) => ({
+					blogs: state.blogs?.filter((blog) => blog.id !== id) || null,
+				}));
+				return { success: true };
+			} catch (error) {
+				return { success: false, error: error as Error };
+			}
+		},
+		async searchBlogsByTitle(title: string) {
+			try {
+			  // Fetch all blogs or a large subset of them
+			  const blogsCollectionRef = collection(db, "blogs");
+			  const querySnapshot = await getDocs(blogsCollectionRef);
+			  
+			  // Filter blogs client-side
+			  const blogs: BlogWithId[] = querySnapshot.docs
+				.map((doc) => {
+				  const data = doc.data() as BlogData;
+				  return {
+					id: doc.id,
+					data: {
+					  title: data.title,
+					  description: data.description,
+					  image: data.image,
+					  slug: data.slug,
+					  date: data.date,
+					  tags: data.tags || [],
+					},
+				  };
+				})
+				.filter((blog) =>
+				  blog.data.title.toLowerCase().includes(title.toLowerCase()) // Substring match, case-insensitive
+				);
+		  
+			  return { success: true, blogs };
+			} catch (error) {
+			  console.error("Error searching blogs by title:", error);
+			  return { success: false, error: error as Error };
+			}
+		  }
+		  
+		  
 	}))
 );

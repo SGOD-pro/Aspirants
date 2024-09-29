@@ -16,17 +16,17 @@ function CarouselPlugin({ topers }: { topers: ToperSchemaWithId[] }) {
 	return (
 		<Carousel
 			plugins={[plugin.current]}
-			className="w-full max-w-lg xl:max-w-2xl"
+			className="w-full max-w-xl xl:max-w-4xl"
 			onMouseEnter={plugin.current.stop}
 			onMouseLeave={plugin.current.reset}
 		>
 			<CarouselContent>
-				{topers.map((toper, index) => (
+				{topers.map((toper) => (
 					<CarouselItem key={toper.uid}>
 						<div className="p-1">
 							<Card>
 								<CardContent className="grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-3 aspect-square lg:aspect-video items-center justify-center w-full h-full">
-									<div className="w-32 h-32 xl:w-44 xl:h-44 rounded-full border-2 p-2 xl:p-3 m-auto">
+									<div className="w-32 h-32 xl:w-64 xl:h-64 rounded-full border-2 p-2 xl:p-3 m-auto">
 										<Image
 											width={200}
 											height={200}

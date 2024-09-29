@@ -26,9 +26,9 @@ const PageWithHeadings: React.FC<PageWithHeadingsProps> = ({ htmlContent }) => {
   }, [htmlContent]);
 
   return (
-    <div className="on-this-page fixed top-24 md:right-10  hidden lg:block prose dark:prose-invert">
+    <div className="on-this-page hidden sm:fixed top-20 md:right-10  lg:block prose dark:prose-invert">
       <h2 className='text-md font-bold my-2'>On This Page</h2>
-      <ul className='text-sm space-y-1'>
+      <ul className='text-sm space-y-1 w-72'>
         {headings.map((heading, index) => (
           <li key={index}>
             <a href={`#${heading.id}`}>{heading.text}</a> {/* Fixed href syntax */}

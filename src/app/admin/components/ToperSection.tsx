@@ -11,9 +11,10 @@ import { Fullscreen } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 
 function ToperSection() {
-	const { fetchTopers, topers } = toperStore((state) => ({
+	const { fetchTopers, topers, hydrated } = toperStore((state) => ({
 		fetchTopers: state.fetchTopers,
 		topers: state.topers,
+		hydrated: state.hydrated,
 	}));
 
 	async function fetchRecord() {
@@ -26,11 +27,14 @@ function ToperSection() {
 			});
 		}
 	}
-
 	React.useEffect(() => {
-		fetchRecord();
+		if (!hydrated) {
+			fetchRecord();
+		}
 	}, []);
-
+	if (!topers) {
+		return null;
+	}
 	return (
 		<div className="relative">
 			<div className="justify-end flex gap-3 lg:absolute right-2 mt-2 lg:mt-0">

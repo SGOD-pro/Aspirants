@@ -19,6 +19,8 @@ export interface ToperSchemaWithId extends addTopersSchemaType {
 
 interface ToperStore {
 	topers: ToperSchemaWithId[] | null;
+	hydrated: boolean;
+	setHydrated(): void;
 	addToper: (
 		toper: addTopersSchemaType
 	) => Promise<{ success: boolean; error?: Error }>;
@@ -27,8 +29,13 @@ interface ToperStore {
 }
 
 const toperStore = create<ToperStore>()(
-	immer((set) => ({
+	immer((set, get) => ({
 		topers: null,
+		hydrated: false,
+		setHydrated() {
+			set({ hydrated: true });
+		},
+
 		fetchTopers: async () => {
 			try {
 				const querySnapshot = await getDocs(collection(db, "topers"));
@@ -37,6 +44,7 @@ const toperStore = create<ToperStore>()(
 					uid: doc.id,
 				})) as ToperSchemaWithId[];
 				set({ topers });
+				get().setHydrated();
 				return { success: true };
 			} catch (error) {
 				console.log(error);
@@ -73,7 +81,7 @@ const toperStore = create<ToperStore>()(
 				return { success: true };
 				set((state) => ({
 					courses: state.topers?.filter((toper) => toper.uid !== id) || null,
-				}))
+				}));
 			} catch (error) {
 				return { success: false, error: error as Error };
 			}

@@ -1,9 +1,10 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import getAnimationControlStore from "@/store/Animation";
 import { Search } from "lucide-react";
 import Blogs from "@/components/BlogCards";
+import { useRouter } from "next/navigation";
 
 // Where Inspiration Meets Information
 function BlogsPage() {
@@ -12,10 +13,16 @@ function BlogsPage() {
 	const shouldAnimate =
 		!blogAnimation.time || new Date() > new Date(blogAnimation.time);
 
-	// const router = useRouter();
+	const router = useRouter();
 	// if (!getAuthState().userPrefs?.isVerified) {
 	// 	router.push("/login");
 	// }
+	const input = useRef<HTMLInputElement>(null);
+	const submit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (!input.current || !input.current?.value) return;
+		router.push(`/blog/search/${input.current.value}`);
+	};
 
 	return (
 		<div>
@@ -28,6 +35,7 @@ function BlogsPage() {
 						}}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.8, ease: "easeOut" }}
+						onAnimationComplete={setBlogAnimationCompleted}
 						className="font-extrabold text-6xl md:text-9xl tracking-wider text-white/10 selection:bg-transparent pointer-events-none selection:text-slate-700 mix-blend-difference"
 					>
 						<strong>BLOGS</strong>
@@ -47,17 +55,18 @@ function BlogsPage() {
 				</div>
 			</div>
 			<div className="">
-				<form className="border-2 border-indigo-700 rounded-full max-w-xl mx-auto flex items-center px-4">
+				<form className="border-2 border-indigo-700 rounded-full max-w-xl mx-auto flex items-center px-4" onSubmit={submit}>
 					<input
 						type="text"
 						className="outline-none h-full bg-transparent w-full py-2"
 						placeholder="Search.."
+						ref={input}
 					/>
 					<button className="">
 						<Search />
 					</button>
 				</form>
-				<Blogs className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1 lg:p-4"/>
+				<Blogs className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1 lg:p-4 items-stretch" />
 			</div>
 		</div>
 	);

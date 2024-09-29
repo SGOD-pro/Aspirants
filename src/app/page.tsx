@@ -13,11 +13,25 @@ const Footer = lazy(() => import("@/components/layout/Footer"));
 const StarsBackground = lazy(() => import("@/components/ui/star-background"));
 const ShootingStars = lazy(() => import("@/components/ui/sooting-star"));
 import LazyLoad from "@/components/layout/LazyLoad";
-
+const CarouselPlugin = lazy(
+	() => import("@/app/admin/components/AdminCarousel")
+);
+import { toperStore } from "@/store/Topers";
 export default function Home() {
-	const { verifySession } = useAuthStore();
+	const { verifySession, hydrated } = useAuthStore();
+	const { fetchTopers, topers, Thydrated } = toperStore((state) => ({
+		fetchTopers: state.fetchTopers,
+		topers: state.topers,
+		Thydrated: state.hydrated,
+	}));
+
 	React.useEffect(() => {
-		verifySession();
+		if (!hydrated) {
+			verifySession();
+		}
+		if (!Thydrated) {
+			fetchTopers();
+		}
 		return () => {
 			verifySession();
 		};
@@ -43,13 +57,25 @@ export default function Home() {
 					</Suspense>
 				</div>
 			</LazyLoad>
-			<LazyLoad fallback={<Skeleton className="w-full h-full" />}>
+			<LazyLoad fallback={<Skeleton className="" />}>
 				<Suspense fallback={<Skeleton className="w-full h-full" />}>
 					<InstractorSection />
 				</Suspense>
 			</LazyLoad>
+			{topers && (
+				<div className="w-full flex items-center flex-col">
+					<h2 className="md:text-6xl text-3xl lg:text-7xl text-center font-bold  my-14 font-Noto_Sans">
+						Aspirants <span className="text-theme"> Elite{"'"}s</span>{" "}
+					</h2>
+					<Suspense fallback={<Skeleton className="w-full h-full" />}>
+						<CarouselPlugin topers={topers} />
+					</Suspense>
+				</div>
+			)}
 			<LazyLoad fallback={<Skeleton className="w-full h-full" />}>
-				<Footer />
+				<div className="h-[16rem]">
+					<Footer />
+				</div>
 			</LazyLoad>
 		</main>
 	);

@@ -4,7 +4,8 @@ import { Raleway } from "next/font/google";
 
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-const inter = Raleway({ subsets: ["latin"] });
+const raleway = Raleway({ subsets: ["latin"] });
+
 import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -24,7 +25,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${inter.className} scrollbar w-screen overflow-x-hidden body`}
+				className={`${raleway.className} scrollbar w-screen overflow-x-hidden body`}
 			>
 				{" "}
 				<ThemeProvider

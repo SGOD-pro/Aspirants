@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Input } from "../ui/hover-input";
+import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

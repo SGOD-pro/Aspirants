@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link";
 import React from "react";
 import { BackgroundBeams } from "@/components/ui/background-beam";
@@ -6,6 +7,7 @@ import {
 	IconBrandWhatsapp,
 	IconGps,
 } from "@tabler/icons-react";
+
 function Footer() {
 	return (
 		<footer className="h-[16rem] w-full rounded-t-3xl relative bg-slate-900/50 flex flex-col items-center justify-center antialiased mt-8 font-Open_Sans">
@@ -45,6 +47,15 @@ function Footer() {
 						View on map <IconGps />
 					</Link>
 				</div>
+			</div>
+			<div className="text-center leading-none text-slate-600 z-10">
+				<p>
+					&copy; 2024 Aspirants Classes. All Rights Reserved.Designed and
+					Developed by Aspirants Tech Team{". "}
+					<Link href="/" className="underline">
+						Privacy Policy | Terms of Service
+					</Link>
+				</p>
 			</div>
 			<BackgroundBeams />
 		</footer>

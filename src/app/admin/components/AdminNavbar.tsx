@@ -10,6 +10,7 @@ import {
 	Layers,
 	LayoutPanelLeft,
 	Image,
+	Server,
 } from "lucide-react";
 import { getAuthState } from "@/store/Auth";
 import { useToast } from "@/components/ui/use-toast";
@@ -44,6 +45,11 @@ const links = [
 		name: "Gallery",
 		link: "/admin/dashboard/gallery",
 		icon: <Image className="md:w-4 md:h-4" />,
+	},
+	{
+		name: "Storage",
+		link: "/admin/dashboard/storage",
+		icon: <Server className="md:w-4 md:h-4" />,
 	},
 ];
 

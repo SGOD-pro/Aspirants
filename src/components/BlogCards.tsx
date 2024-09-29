@@ -1,72 +1,53 @@
 "use client";
 import React, { useEffect } from "react";
-import Image from "next/image";
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
-import Link from "next/link";
 import { useBlogStore } from "@/store/Blogs";
-import { Button } from "./ui/button";
-import { Trash } from "lucide-react";
-Trash;
-function Blogs({className}:{className:string}) {
-	const { blogs, readAllFilesFromStorage } = useBlogStore((state) => ({
-		blogs: state.blogs,
-		readAllFilesFromStorage: state.readAllFilesFromStorage,
-	}));
-	console.log(blogs);
+import { useAuthStore } from "@/store/Auth";
+import { toast } from "./ui/use-toast";
+import BlogCard from "./layout/BlogCards";
+
+function Blogs({ className }: { className: string }) {
+	const { blogs, readAllFilesFromStorage, deleteBlog } = useBlogStore(
+		(state) => ({
+			blogs: state.blogs,
+			readAllFilesFromStorage: state.readAllFilesFromStorage,
+			deleteBlog: state.deleteBlog,
+		})
+	);
+	const { userPrefs } = useAuthStore();
+	const deleteBlogHandler = async (blogId: string) => {
+		const response = await deleteBlog(blogId);
+		if (!response.success) {
+			toast({
+				title: "Error",
+				description: response.error?.message || "Something went wrong",
+				variant: "destructive",
+			});
+			return;
+		}
+		toast({
+			title: "Blog Deleted",
+			description: "Blog has been deleted",
+		});
+	};
 	useEffect(() => {
 		async function fetch() {
-			if (!blogs){console.log("fetching blogs"); await readAllFilesFromStorage()};
+			if (!blogs) {
+				console.log("fetching blogs");
+				await readAllFilesFromStorage();
+			}
 		}
 		fetch();
 	}, []);
 
 	return (
-		<div className={`grid ${className}`}>
+		<div className={`grid ${className} px-4`}>
 			{blogs?.map((blog) => (
-				<CardContainer className="inter-var" key={blog.data.title}>
-					<CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto  h-auto rounded-xl p-6 border flex flex-col justify-between">
-						<CardItem
-							translateZ="50"
-							className="text-xl font-bold text-neutral-600 dark:text-white"
-						>
-							{blog.data.title}
-						</CardItem>
-						<CardItem
-							as="p"
-							translateZ="60"
-							className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
-						>
-							{blog.data.description}
-						</CardItem>
-						<CardItem translateZ="100" className="w-full mt-4">
-							<Image
-								src={blog.data.image}
-								height="700"
-								width="700"
-								className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
-								alt="thumbnail"
-							/>
-						</CardItem>
-						<div className="flex justify-end items-center mt-20 gap-5">
-							<CardItem translateZ={20} as="button">
-								<Button
-									variant={"destructive"}
-									size={"icon"}
-									className="px-4 py-2 h-fit w-fit"
-								>
-									<Trash className="h-4 w-4" />
-								</Button>
-							</CardItem>
-							<CardItem
-								translateZ={20}
-								as="button"
-								className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold"
-							>
-								<Link href={`/blog/${blog.id}`}>Read More</Link>
-							</CardItem>
-						</div>
-					</CardBody>
-				</CardContainer>
+				<BlogCard
+					key={blog.id}
+					blog={blog}
+					userPrefs={userPrefs}
+					deleteBlogHandler={deleteBlogHandler}
+				/>
 			))}
 		</div>
 	);
