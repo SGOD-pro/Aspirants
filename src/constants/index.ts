@@ -39,11 +39,11 @@ export const school = [
 
 export const undergraduate = [
 	{
-		header: "Bsc",
+		header: "BSC",
 		subject: "Math, Statistics",
 	},
 	{
-		header: "Bca",
+		header: "BCA",
 		subject: "Math, Statistics",
 	},
 ];

@@ -65,7 +65,7 @@ export default function Home() {
 			{topers && (
 				<div className="w-full flex items-center flex-col">
 					<h2 className="md:text-6xl text-3xl lg:text-7xl text-center font-bold  my-14 font-Noto_Sans">
-						Aspirants <span className="text-theme"> Elite{"'"}s</span>{" "}
+						Aspirants <span className="text-theme highlight"> Elite{"'"}s</span>{" "}
 					</h2>
 					<Suspense fallback={<Skeleton className="w-full h-full" />}>
 						<CarouselPlugin topers={topers} />

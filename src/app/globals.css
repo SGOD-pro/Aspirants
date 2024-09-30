@@ -114,13 +114,17 @@
 		scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
 	}
 }
-*::selection {
+/* *::selection {
 	background-color: #c4c4c4c6;
 	color: #363636;
-}
+} */
 *::selection {
-	background-color: #f9d0c1;
-	color: #4338ca;
+	background-color: #fff;
+	color: #6D28D9;
+}
+.highlight::selection {
+	color: #fff;
+	background-color: #030712;
 }
 .glow {
 	-webkit-box-shadow: 0px 0px 154px 94px rgba(24, 198, 225, 0.82);

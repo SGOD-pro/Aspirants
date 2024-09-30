@@ -8,7 +8,7 @@ import BlogCard from "@/components/layout/BlogCards";
 import BackButton from "@/components/BackButton";
 import Search from "./Search";
 
-function page({ params }: { params: { slug: string } }) {
+function SearchPage({ params }: { params: { slug: string } }) {
 
 	const { searchBlogsByTitle } = useBlogStore();
 	const [input, setInput] = useState<string>("");
@@ -67,4 +67,4 @@ function page({ params }: { params: { slug: string } }) {
 	);
 }
 
-export default page;
+export default SearchPage;
