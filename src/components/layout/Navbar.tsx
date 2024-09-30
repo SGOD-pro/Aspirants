@@ -12,7 +12,7 @@ import { Button } from "../ui/button";
 import Loader from "@/app/loading";
 import { toast } from "../ui/use-toast";
 import UserProfile from "../home-components/UserProfile";
-
+import getAnimationControlStore from "@/store/Animation";
 const NAV_ITEMS = [
 	{ name: "Home", link: "/" },
 	{ name: "Courses", link: "/courses" },
@@ -22,6 +22,8 @@ const NAV_ITEMS = [
 
 function Navbar() {
 	const pathname = usePathname();
+	const { navItemsAnimation, setNavItemsAnimation } =
+		getAnimationControlStore();
 	const { scrollY } = useScroll();
 	const [isScrolled, setIsScrolled] = useState(true);
 	const [showNav, setShowNav] = useState(false);
@@ -90,7 +92,7 @@ function Navbar() {
 	}, []);
 
 	// User logout handling
-	const router=useRouter()
+	const router = useRouter();
 	const userLogout = async () => {
 		setLogingout(true);
 		const response = await logout();
@@ -123,8 +125,11 @@ function Navbar() {
 	};
 
 	const linkVariants = {
-		hidden: { y: -5, opacity: 0, filter: "blur(10px)" },
-		visible: { y: 0, opacity: 1, filter: "blur(0px)" },
+		hidden: {
+			y: navItemsAnimation ? 0 : -25,
+			opacity: navItemsAnimation ? 1 : 0,
+		},
+		visible: { y: 0, opacity: 1 },
 	};
 
 	// Loader display while logging out
@@ -142,7 +147,7 @@ function Navbar() {
 				</div>
 			)}
 			<nav
-				className={`h-dvh w-screen sm:h-fit sm:w-[80%] border p-10 sm:p-4 sm:px-5 backdrop-blur sm:bg-slate-950/40 bg-slate-950/95 flex-col sm:flex-row sm:justify-between text-3xl sm:text-base sm:items-center gap-10 sm:gap-0 duration-700 m-auto fixed z-50 right-0 rounded-b-3xl ${
+				className={`h-dvh w-screen sm:h-fit sm:w-[80%] border p-10 sm:p-4 sm:px-5 backdrop-blur sm:bg-slate-950/40 bg-slate-950/95 flex-col sm:flex-row sm:justify-between text-3xl sm:text-base sm:items-center gap-10 sm:gap-0 duration-500 m-auto fixed z-50 right-0 rounded-b-3xl ${
 					showNav ? "translate-x-0" : "translate-x-full"
 				} sm:right-1/2 sm:translate-x-1/2 transition-all top-0 ${
 					!isScrolled && !isMobileView ? "-translate-y-full" : "-translate-y-0"
@@ -157,6 +162,8 @@ function Navbar() {
 						variants={containerVariants}
 						initial="hidden"
 						animate={showNav ? "visible" : "hidden"}
+						onAnimationComplete={setNavItemsAnimation}
+						transition={{ delay: 0.2 }}
 					>
 						<motion.div variants={linkVariants}>
 							<h2 className="text-2xl">{user?.displayName}</h2>
@@ -179,7 +186,11 @@ function Navbar() {
 						<motion.div variants={linkVariants}>
 							<Link
 								href="/contactus"
-								className="sm:p-2 sm:border rounded-full hover:bg-gray-500/20 w-fit flex items-center gap-1 underline sm:no-underline"
+								className={`${
+									pathname !== `/contactus`
+										? "opacity-40 hover:opacity-55"
+										: "opacity-100"
+								} `}
 							>
 								<Headset className="w-4 h-4 hidden sm:block" />
 								<span className="sm:hidden">Contact us</span>
@@ -189,7 +200,11 @@ function Navbar() {
 							{!userPrefState?.isVerified ? (
 								<Link
 									href="/login"
-									className="rounded-full sm:px-4 sm:py-2 sm:border sm:text-sm hover:bg-gray-500/20 font-light w-fit underline sm:no-underline"
+									className={`${
+										pathname !== `/login`
+											? "opacity-40 hover:opacity-55"
+											: "opacity-100"
+									} `}
 								>
 									<span>Sign Up/In</span>
 								</Link>

@@ -14,9 +14,7 @@ function BlogsPage() {
 		!blogAnimation.time || new Date() > new Date(blogAnimation.time);
 
 	const router = useRouter();
-	// if (!getAuthState().userPrefs?.isVerified) {
-	// 	router.push("/login");
-	// }
+
 	const input = useRef<HTMLInputElement>(null);
 	const submit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -25,7 +23,7 @@ function BlogsPage() {
 	};
 
 	return (
-		<div>
+		<>
 			<div className="h-[25dvh] md:h-[40dvh] flex items-end pb-10 md:pb-0 md:items-center justify-center">
 				<div className="relative w-full text-center">
 					<motion.h1
@@ -55,7 +53,7 @@ function BlogsPage() {
 				</div>
 			</div>
 			<div className="">
-				<form className="border-2 border-indigo-700 rounded-full max-w-xl mx-auto flex items-center px-4" onSubmit={submit}>
+				<form className="border-2 border-indigo-700 rounded-full max-w-xl mx-4 sm:mx-auto flex items-center px-4 z-20 bg-slate-950" onSubmit={submit}>
 					<input
 						type="text"
 						className="outline-none h-full bg-transparent w-full py-2"
@@ -68,7 +66,7 @@ function BlogsPage() {
 				</form>
 				<Blogs className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1 lg:p-4 items-stretch" />
 			</div>
-		</div>
+		</>
 	);
 }
 

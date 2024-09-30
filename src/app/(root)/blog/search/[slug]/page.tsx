@@ -39,17 +39,17 @@ function SearchPage({ params }: { params: { slug: string } }) {
 				</div>
 			)}
 
-			<main className="sm:py-20 p-4 ">
+			<main className="py-24">
 				<BackButton />
 				<Search />
 				{blogs && blogs.length > 0 ? (
-					<section className="grid">
+					<section className="grid p-3">
 						{blogs.map((blog) => (
 							<BlogCard key={blog.data.title} blog={blog} />
 						))}
 					</section>
 				) : (
-					<div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-7xl text-[#c4a8f07c] font-semibold text-center ">
+					<div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-7xl text-[#c4a8f07c] font-semibold text-center">
 						<div className="w-72 m-auto">
 							<Image
 								src={"/no-data.svg"}

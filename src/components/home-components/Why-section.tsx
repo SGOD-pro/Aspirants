@@ -75,20 +75,20 @@ const content = [
 function WhySection() {
 	return (
 		<>
-			<div className="hidden sm:block relative -z-10">
+			<div className="hidden sm:block absolute lg:relative top-0 left-0 -z-10 sm:-translate-y-[25%] md:-translate-y-[30%] lg:translate-y-0 w-screen">
 				<LampContainer>
-					<h2 className="text-4xl sm:text-6xl text-center font-semibold">
+					<h2 className="text-4xl sm:text-6xl text-center font-semibold sm:-translate-y-[120%] lg:translate-y-0 ">
 						Why <br /> <strong> Aspirants Classes?</strong>
 					</h2>
 				</LampContainer>
 			</div>
 			<div className="block sm:hidden relative z-10 mb-5 pt-8 w-full">
-				<div className="absolute w-2/3 h-56 rounded-full bg-cyan-600/50 glow top-0 left-1/2 -translate-x-1/2 z-0 -translate-y-1/2 blur-[120px] opacity-80"></div>
+				<div className="absolute w-2/3 h-56 rounded-full bg-cyan-600/80 glow top-0 left-1/2 -translate-x-1/2 z-0 -translate-y-1/2 blur-[120px] opacity-80"></div>
 				<h2 className="text-4xl sm:text-6xl text-center font-semibold z-10 relative mb-10">
 					Why <br /> <strong> Aspirants Classes?</strong>
 				</h2>
 			</div>
-			<div className="m-auto w-full md:w-[80dvw] relative sm:-translate-y-1/3">
+			<div className="m-auto w-full md:w-[80dvw] relative sm:pt-56 lg:pt-0 z-10">
 				<Suspense fallback={<Skeleton className="w-full h-full" />}>
 					<StickyScroll content={content} />
 				</Suspense>

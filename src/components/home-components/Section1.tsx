@@ -28,7 +28,7 @@ function Section1() {
 					</HoverBorderGradient>
 				</div>
 			</aside>
-			<div className="pr-8 hidden lg:block absolute right-20 top-10 z-[100]">
+			<div className="pr-0 xl:pr-8 hidden lg:block absolute right-10 xl:right-20 top-10 z-[100]">
 				<Suspense fallback={<Skeleton className="w-full h-full" />}>
 					<EasterEgg />
 				</Suspense>

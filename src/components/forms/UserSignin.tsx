@@ -14,14 +14,16 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { getAuthState, useAuthStore } from "@/store/Auth";
+import { getAuthState } from "@/store/Auth";
 import { notFound, useRouter } from "next/navigation";
 import InputOTPForm from "./OtpValidation";
 import { LoaderCircle } from "lucide-react";
 import { MoveRight } from "lucide-react";
 import { toast } from "../ui/use-toast";
+import { useRouteHistory } from "@/hooks/RoutesHistory";
 function SignupForm() {
 	const { login } = getAuthState();
+	const { goBack } = useRouteHistory();
 	const [verify, setVerify] = React.useState(false);
 
 	const router = useRouter();
@@ -48,18 +50,11 @@ function SignupForm() {
 
 			const role = response.userPrefs?.role;
 			console.log(role);
-
-			switch (role) {
-				case "admin":
-					console.log("admin login");
-					router.push("/admin/dashboard");
-					break;
-				case "student":
-					router.push("/student");
-				default:
-					router.push("/");
-					break;
+			if (role === "admin") {
+				router.push("/admin/dashboard");
+				return;
 			}
+			goBack();
 		} catch (error) {
 			notFound();
 		}

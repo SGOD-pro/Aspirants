@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/input-otp";
 import { toast } from "@/components/ui/use-toast";
 import { getAuthState } from "@/store/Auth";
-import { useRouter } from "next/navigation";
+import { useRouteHistory } from "@/hooks/RoutesHistory";
 
 const FormSchema = z.object({
 	pin: z.string().min(6, {
@@ -30,7 +30,6 @@ const FormSchema = z.object({
 });
 
 export default function InputOTPForm() {
-	const router = useRouter();
 	const { user } = getAuthState();
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -38,7 +37,7 @@ export default function InputOTPForm() {
 			pin: "",
 		},
 	});
-
+const {goBack}=useRouteHistory()
 	async function onSubmit(data: z.infer<typeof FormSchema>) {
 		if (!user?.uid) {
 			toast({
@@ -63,7 +62,7 @@ export default function InputOTPForm() {
 				});
 				return;
 			}
-			router.push("/");
+			goBack()
 		} catch (error) {
 			toast({
 				title: "Cannot verify",

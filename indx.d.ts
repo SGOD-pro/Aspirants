@@ -18,3 +18,8 @@ interface BlogData {
 	tags?: string[]; // Optional field
 	[key: string]: any; // Allow additional optional fields
 }
+
+
+interface Animations {
+	time: Date | null;
+}

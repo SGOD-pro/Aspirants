@@ -130,11 +130,7 @@ const config = {
 					},
 				},
 			},
-			fontFamily: {
-				roboto: ["Roboto", "sans-serif"],
-				Noto_Sans: ["Noto_Sans", "sans-serif"],
-				Open_Sans: ["Open_Sans", "sans-serif"],
-			},
+			
 		},
 	},
 	plugins: [

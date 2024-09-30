@@ -2,25 +2,17 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
-interface CurtainAnimation {
-	time: Date | null;
-}
-interface BlogAnimation {
-	time: Date | null;
-}
-interface CoursesAnimation {
-	time: Date | null;
-}
-
 interface AnimationStore {
-	curtainAnimation: CurtainAnimation;
-	coursesAnimation: CoursesAnimation;
-	blogAnimation: BlogAnimation;
+	curtainAnimation: Animations;
+	coursesAnimation: Animations;
+	blogAnimation: Animations;
+	navItemsAnimation: boolean;
 	hydrated: boolean;
 	setHydrated(): void;
 	setCurtainAnimationCompleted: () => void;
 	setCoursesAnimationCompleted: () => void;
 	setBlogAnimationCompleted: () => void;
+	setNavItemsAnimation: () => void;
 }
 
 const animationControl = create<AnimationStore>()(
@@ -29,6 +21,7 @@ const animationControl = create<AnimationStore>()(
 			curtainAnimation: { time: null },
 			coursesAnimation: { time: null },
 			blogAnimation: { time: null },
+			navItemsAnimation: false,
 			hydrated: false,
 			setHydrated() {
 				set({ hydrated: true });
@@ -43,7 +36,11 @@ const animationControl = create<AnimationStore>()(
 					state.curtainAnimation.time = time;
 				});
 			},
-
+			setNavItemsAnimation:()=>{
+				set((state) => {
+					state.navItemsAnimation = true;
+				});
+			},
 			setCoursesAnimationCompleted: () => {
 				const time = new Date();
 				time.setHours(time.getHours() + 24);
@@ -62,6 +59,12 @@ const animationControl = create<AnimationStore>()(
 		})),
 		{
 			name: "animation-control",
+			partialize: (state) => ({
+				curtainAnimation: state.curtainAnimation,
+				coursesAnimation: state.coursesAnimation,
+				blogAnimation: state.blogAnimation,
+				hydrated: state.hydrated,
+			}),
 			onRehydrateStorage() {
 				return (state, error) => {
 					if (!error) state?.setHydrated();

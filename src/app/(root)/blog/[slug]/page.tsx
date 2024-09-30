@@ -7,6 +7,12 @@ import BackButton from "@/components/BackButton";
 import { useBlogStore } from "@/store/Blogs";
 import Content from "./Content";
 import "./custom.css";
+import { Noto_Sans } from "next/font/google";
+
+const notoSans = Noto_Sans({
+	subsets: ["latin"],
+	weight: ["400", "700"],
+});
 function BlogView({ params }: { params: { slug: string } }) {
 	const { getContent } = useBlogStore();
 	const [loading, setLoading] = useState(false);
@@ -38,7 +44,7 @@ function BlogView({ params }: { params: { slug: string } }) {
 						<Loader />
 					</div>
 				) : (
-					<div className="pt-20 p-5 font-Open_Sans">
+					<div className={`pt-24 sm:pt-20 p-5 ${notoSans.className}`}>
 						<div className="">
 							<BackButton />
 						</div>

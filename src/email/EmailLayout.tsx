@@ -26,61 +26,56 @@ import {
   }: AWSVerifyEmailProps) {
     return (
       <Html>
-        <Head />
-        <Preview>AWS Email Verification</Preview>
-        <Body style={main}>
-          <Container style={container}>
-            <Section style={coverSection}>
-              <Section style={imageSection}>
-                <Img
-                  src={`${baseUrl}/static/aws-logo.png`}
-                  width="75"
-                  height="45"
-                  alt="AWS's Logo"
-                />
-              </Section>
-              <Section style={upperSection}>
-                <Heading style={h1}>Verify your email address</Heading>
-                <Text style={mainText}>
-                  Thanks for starting the new AWS account creation process. We
-                  want to make sure it&#39;s really you. Please enter the following
-                  verification code when prompted. If you don&apos;t want to
-                  create an account, you can ignore this message.
-                </Text>
-                <Section style={verificationSection}>
-                  <Text style={verifyText}>Verification code</Text>
-  
-                  <Text style={codeText}>{verificationCode}</Text>
-                  <Text style={validityText}>
-                    (This code is valid for 10 minutes)
-                  </Text>
-                </Section>
-              </Section>
-              <Hr />
-              <Section style={lowerSection}>
-                <Text style={cautionText}>
-                  Amazon Web Services will never email you and ask you to disclose
-                  or verify your password, credit card, or banking account number.
+      <Head />
+      <Preview>AC Email Verification</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={coverSection}>
+            <Section style={imageSection}>
+              <Img
+                src={`${baseUrl}/static/institution-logo.png`} // Replace with your institution logo
+                width="75"
+                height="45"
+                alt="Institution's Logo"
+              />
+            </Section>
+            <Section style={upperSection}>
+              <Heading style={h1}>Verify your email address</Heading>
+              <Text style={mainText}>
+                Thank you for starting the registration process with Aspirants Classes. We
+                want to ensure it{`'`}s really you. Please enter the following verification code when prompted. 
+                If you didn{`'`}t request this, you can ignore this message.
+              </Text>
+              <Section style={verificationSection}>
+                <Text style={verifyText}>Verification code</Text>
+                <Text style={codeText}>{verificationCode}</Text>
+                <Text style={validityText}>
+                  (This code is valid for 10 minutes)
                 </Text>
               </Section>
             </Section>
-            <Text style={footerText}>
-              This message was produced and distributed by Amazon Web Services,
-              Inc., 410 Terry Ave. North, Seattle, WA 98109. © 2022, Amazon Web
-              Services, Inc.. All rights reserved. AWS is a registered trademark
-              of{" "}
-              <Link href="https://amazon.com" target="_blank" style={link}>
-                Amazon.com
-              </Link>
-              , Inc. View our{" "}
-              <Link href="https://amazon.com" target="_blank" style={link}>
-                privacy policy
-              </Link>
-              .
-            </Text>
-          </Container>
-        </Body>
-      </Html>
+            <Hr />
+            <Section style={lowerSection}>
+              <Text style={cautionText}>
+                Aspirants Classes will never ask you to disclose or verify your password, 
+                credit card, or banking account information via email.
+              </Text>
+            </Section>
+          </Section>
+          <Text style={footerText}>
+            This message was produced and distributed by Aspirants Classes, [Institution Address]. 
+            © 2024, Aspirants Classes. All rights reserved. 
+            <Link href="[Institution Website]" target="_blank" style={link}>
+              Visit our website
+            </Link>. View our{" "}
+            <Link href="[Privacy Policy URL]" target="_blank" style={link}>
+              privacy policy
+            </Link>.
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+    
     );
   }
   

@@ -7,7 +7,7 @@ function BackButton() {
 	// console.log(useRouteHistory());
 	const { goBack } = useRouteHistory();
 	return (
-		<div className="fixed top-10 left-10">
+		<div className="fixed top-10 left-5 sm:left-10">
 			<Button onClick={goBack} size={"icon"}>
 				<Undo2 />
 			</Button>

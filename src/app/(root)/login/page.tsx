@@ -1,5 +1,5 @@
 "use client";
-import { lazy, Suspense } from "react";
+import { lazy, memo, Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IconBrandGoogle, IconBrandApple } from "@tabler/icons-react";
@@ -10,15 +10,25 @@ import { getAuthState } from "@/store/Auth";
 import { notFound, useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouteHistory } from "@/hooks/RoutesHistory";
 
+const BottomGradient = memo(() => {
+	return (
+		<>
+			<span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
+			<span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+		</>
+	);
+});
+BottomGradient.displayName = "BottomGradient";
 export default function TabsDemo() {
-	const router = useRouter();
 	const { signInWithGoogle } = getAuthState();
+	const { goBack } = useRouteHistory();
 	const GoogleSignin = async () => {
 		try {
 			const response = await signInWithGoogle();
 			if (response.success) {
-				router.push("/");
+				goBack();
 			} else {
 				toast({
 					title: "Invalid Credentials",
@@ -78,11 +88,4 @@ export default function TabsDemo() {
 		</section>
 	);
 }
-const BottomGradient = () => {
-	return (
-		<>
-			<span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-			<span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-		</>
-	);
-};
+

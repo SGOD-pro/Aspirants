@@ -9,10 +9,11 @@ const WhySection = lazy(
 const InstractorSection = lazy(
 	() => import("@/components/home-components/InstractorSection")
 );
-const Footer = lazy(() => import("@/components/layout/Footer"));
+
 const StarsBackground = lazy(() => import("@/components/ui/star-background"));
 const ShootingStars = lazy(() => import("@/components/ui/sooting-star"));
 import LazyLoad from "@/components/layout/LazyLoad";
+import Footer from "@/components/layout/Footer";
 const CarouselPlugin = lazy(
 	() => import("@/app/admin/components/AdminCarousel")
 );
@@ -38,20 +39,20 @@ export default function Home() {
 	}, []);
 
 	return (
-		<main className="scrollbar">
+		<main className="scrollbar overflow-hidden">
 			<Suspense fallback={<div className="w-full h-full" />}>
 				<div className="h-[100dvh] absolute top-0 left-0 -z-0 w-full bg-transparent">
 					<StarsBackground />
 					<ShootingStars />
 				</div>
 			</Suspense>
-			<section className="relative h-[50dvh] lg:h-[90dvh] z-40 flex justify-between lg:max-h-[800px]">
+			<section className="relative h-[60dvh] xl:h-[90dvh] z-40 flex justify-between">
 				<Suspense fallback={<Skeleton className="w-full h-full" />}>
 					<LandingPage />
 				</Suspense>
 			</section>
 			<LazyLoad fallback={<Skeleton className="w-full h-full" />}>
-				<div className="w-full relative  sm:p-8 mb-10 sm:mb-1">
+				<div className="w-full  relative  sm:p-8 mb-10 sm:mb-1 bg-slate-10 ">
 					<Suspense fallback={<Skeleton className="w-full h-full" />}>
 						<WhySection />
 					</Suspense>
@@ -72,11 +73,9 @@ export default function Home() {
 					</Suspense>
 				</div>
 			)}
-			<LazyLoad fallback={<Skeleton className="w-full h-full" />}>
-				<div className="h-[16rem]">
-					<Footer />
-				</div>
-			</LazyLoad>
+			<div className="">
+				<Footer />
+			</div>
 		</main>
 	);
 }

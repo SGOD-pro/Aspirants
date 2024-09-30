@@ -27,10 +27,9 @@ export default function SignupForm() {
 	});
 	async function onSubmit(values: z.infer<typeof userSignupSchema>) {
 		try {
-
 			const response = await createAccount(values.email, values.password);
 			console.log(response);
-		
+
 			if (response.success) {
 				setEmailSend(true);
 			} else {
@@ -40,7 +39,13 @@ export default function SignupForm() {
 					variant: "destructive",
 				});
 			}
-		} catch (error) {}
+		} catch (error: any) {
+			toast({
+				title: "Invalid Credentials",
+				description: `${error.message}` || "Something went wrong",
+				variant: "destructive",
+			});
+		}
 	}
 
 	return (
