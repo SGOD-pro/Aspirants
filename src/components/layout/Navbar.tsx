@@ -183,7 +183,7 @@ function Navbar() {
 								</Link>
 							</motion.div>
 						))}
-						<motion.div variants={linkVariants}>
+						<motion.div variants={linkVariants} key={"contact"}>
 							<Link
 								href="/contactus"
 								className={`${
@@ -196,7 +196,7 @@ function Navbar() {
 								<span className="sm:hidden">Contact us</span>
 							</Link>
 						</motion.div>
-						<motion.div variants={linkVariants}>
+						<motion.div variants={linkVariants} key={"signup"}>
 							{!userPrefState?.isVerified ? (
 								<Link
 									href="/login"
@@ -205,6 +205,7 @@ function Navbar() {
 											? "opacity-40 hover:opacity-55"
 											: "opacity-100"
 									} `}
+									 onClick={() => setShowNav(false)}
 								>
 									<span>Sign Up/In</span>
 								</Link>

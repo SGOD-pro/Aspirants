@@ -30,6 +30,7 @@ export interface UserPrefs {
 interface AdminAuth {
 	user: any | null;
 	userPrefs: UserPrefs | null;
+	isCreatingAccount: boolean;
 	hydrated: boolean;
 	setHydrated(): void;
 	verifySession(): Promise<void>;
@@ -55,29 +56,42 @@ export const useAuthStore = create<AdminAuth>()(
 			user: null,
 			userPrefs: null,
 			hydrated: false,
-
+			isCreatingAccount: false,
 			setHydrated() {
 				set({ hydrated: true });
 			},
 
 			async verifySession() {
+				if (get().isCreatingAccount) {
+					console.log(
+						"Skipping session verification as account is being created"
+					);
+					return;
+				}
 				return new Promise<void>((resolve) => {
 					const unsubscribe = onAuthStateChanged(auth, async (user) => {
 						if (user) {
 							const userDocRef = doc(db, "users", user.uid);
 							const userDoc = await getDoc(userDocRef);
+
 							if (userDoc.exists()) {
-								set({ user, userPrefs: userDoc.data() as UserPrefs });
-								if (!userDoc.data()?.isVerified) {
-									console.log("admin available");
+								const userPrefs = userDoc.data() as UserPrefs;
+								set({ user, userPrefs });
+
+								console.log("User verified session:", user, userPrefs);
+
+								// Check if the user is not verified
+								if (!userPrefs.isVerified && !get().isCreatingAccount) {
+									console.log("User not verified, logging out...");
 									set({ user: null, userPrefs: null });
-									get().logout();
+									await get().logout(); // Make sure to await logout
 								}
-								console.log(userDoc.data());
 							} else {
-								set({ user, userPrefs: null });
+								console.log("No user document found in Firestore");
+								set({ user: null, userPrefs: null });
 							}
 						} else {
+							console.log("No authenticated user found");
 							set({ user: null, userPrefs: null });
 						}
 						set({ hydrated: true });
@@ -87,9 +101,12 @@ export const useAuthStore = create<AdminAuth>()(
 					return () => unsubscribe();
 				});
 			},
-
 			async createAccount(email: string, password: string) {
 				try {
+					set({ isCreatingAccount: true });
+					console.log("Setting isCreatingAccount to true");
+
+					// Create the user with email and password
 					const userCredential = await createUserWithEmailAndPassword(
 						auth,
 						email,
@@ -97,12 +114,17 @@ export const useAuthStore = create<AdminAuth>()(
 					);
 					const user = userCredential.user;
 
+					console.log("Account created, user:", user);
+
+					// Set up the user document in Firestore
 					await setDoc(doc(db, "users", user.uid), {
 						isVerified: false,
 						role: null,
 					} as UserPrefs);
-					console.log("sending otp");
+					console.log("User document set in Firestore");
 
+					// Send OTP email
+					console.log("Sending OTP to email:", email);
 					const response = await fetch("/api/send-otp", {
 						method: "POST",
 						headers: {
@@ -111,23 +133,26 @@ export const useAuthStore = create<AdminAuth>()(
 						body: JSON.stringify({ email, uid: user.uid }),
 					});
 
-					if (response.status > 200) {
+					if (!response.ok) {
+						console.error("Failed to send OTP email");
 						return {
 							success: false,
 							error: new Error("Error sending verification email"),
 						};
 					}
+					console.log("OTP email sent");
 
+					// Update state after the account creation and OTP sending
 					set({ user, userPrefs: { isVerified: false, role: "normal" } });
 					get().setHydrated();
+					console.log("User state updated in store");
+
+					set({ isCreatingAccount: false });
+					console.log("Account creation flow complete");
 					return { success: true, user };
 				} catch (error: any) {
-					if (error.code === "auth/email-already-in-use") {
-						return {
-							success: false,
-							error: new Error("User already exists"),
-						};
-					}
+					console.error("Error in createAccount:", error);
+					set({ isCreatingAccount: false }); // Reset in case of failure
 					return { success: false, error: error as Error };
 				}
 			},

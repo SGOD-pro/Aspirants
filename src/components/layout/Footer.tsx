@@ -57,7 +57,7 @@ function Footer() {
 					</Link>
 				</div>
 			</div>
-			<div className="text-center leading-none text-slate-600 z-10 p-3">
+			<div className="text-center leading-none text-slate-600 z-10 p-3 text-xs sm:text-sm">
 				<p>
 					&copy; 2024 Aspirants Classes. All Rights Reserved.Designed and
 					Developed by Aspirants Tech Team{". "}
