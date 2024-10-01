@@ -17,10 +17,6 @@ import {
     verificationCode?: string;
   }
   
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "";
-  
   export  function VerifyEmail({
     verificationCode = "596853",
   }: AWSVerifyEmailProps) {
@@ -33,7 +29,7 @@ import {
           <Section style={coverSection}>
             <Section style={imageSection}>
               <Img
-                src={`${baseUrl}/static/institution-logo.png`} // Replace with your institution logo
+                src={`https://firebasestorage.googleapis.com/v0/b/aspirants-b1e24.appspot.com/o/icon%2F4.png?alt=media&token=43825505-8e01-41bd-bba1-6d674aa2b374`} // Replace with your institution logo
                 width="75"
                 height="45"
                 alt="Institution's Logo"

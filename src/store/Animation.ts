@@ -60,7 +60,6 @@ const animationControl = create<AnimationStore>()(
 		{
 			name: "animation-control",
 			partialize: (state) => ({
-				curtainAnimation: state.curtainAnimation,
 				coursesAnimation: state.coursesAnimation,
 				blogAnimation: state.blogAnimation,
 				hydrated: state.hydrated,
