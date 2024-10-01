@@ -154,6 +154,7 @@ const CourseSection: React.FC<CourseSectionProps> = ({
 													<p>{item.subject}</p>
 												</div>
 											)}
+										
 										</div>
 									</CardContent>
 								</Card>
@@ -161,8 +162,8 @@ const CourseSection: React.FC<CourseSectionProps> = ({
 						</CarouselItem>
 					))}
 				</CarouselContent>
-				<CarouselPrevious />
-				<CarouselNext />
+				<CarouselPrevious className="z-50 translate-x-full sm:translate-x-0"/>
+				<CarouselNext className="z-50 -translate-x-full sm:-translate-x-0"/>
 			</Carousel>
 		</motion.section>
 	);

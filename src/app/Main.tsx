@@ -39,7 +39,7 @@ function Main({ children }: Readonly<{ children: React.ReactNode }>) {
 	const [showCurtain, setShowCurtain] = React.useState(true);
 	React.useEffect(() => {
 		if (
-			pathName !== "/" ||
+			pathName !== "/" &&
 			(curtainAnimation.time && curtainAnimation.time > new Date())
 		) {
 			setShowCurtain(false);
