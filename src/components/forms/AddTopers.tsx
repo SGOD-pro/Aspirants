@@ -23,7 +23,7 @@ function AddTopers() {
 	});
 	const { addToper } = getTopersStore();
 	const fileInputRef = useRef<HTMLInputElement>(null);
-
+	const [key, setKey] = React.useState(0);
 	async function onSubmit(values: z.infer<typeof addTopersSchema>) {
 		console.log(values);
 		const response = await addToper(values);
@@ -40,7 +40,7 @@ function AddTopers() {
 			});
 		}
 		form.reset();
-
+		setKey((prev) => prev + 1);
 		if (fileInputRef.current) {
 			fileInputRef.current.value = "";
 		}
@@ -48,7 +48,11 @@ function AddTopers() {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="space-y-4"
+				key={key}
+			>
 				<FormField
 					control={form.control}
 					name="name"
@@ -94,7 +98,9 @@ function AddTopers() {
 						</FormItem>
 					)}
 				/>
-				<Button type="submit" disabled={form.formState.isSubmitting}>Submit</Button>
+				<Button type="submit" disabled={form.formState.isSubmitting}>
+					Submit
+				</Button>
 			</form>
 		</Form>
 	);

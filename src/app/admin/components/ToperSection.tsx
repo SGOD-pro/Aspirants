@@ -32,9 +32,6 @@ function ToperSection() {
 			fetchRecord();
 		}
 	}, []);
-	if (!topers) {
-		return null;
-	}
 	return (
 		<div className="relative">
 			<div className="justify-end flex gap-3 lg:absolute right-2 mt-2 lg:mt-0">

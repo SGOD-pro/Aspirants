@@ -40,7 +40,7 @@ function CarouselPlugin({ topers }: { topers: ToperSchemaWithId[] }) {
 											{toper.name}
 										</h2>
 										<p className="text-xs xl:text-sm opacity-70 pt-4">
-											Lorem ipsum dolor sit, amet consectetur adipisicing elit. Saepe praesentium sit placeat sint nulla pariatur consequuntur esse et doloremque enim..
+											{toper.details}
 										</p>
 									</div>
 								</CardContent>

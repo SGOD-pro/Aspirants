@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { toperStore } from "@/store/Topers";
 import Image from "next/image";
 
+
 function ShowTopers() {
 	const { topers, deleteToper } = toperStore((state) => ({
 		topers: state.topers,
@@ -26,7 +27,12 @@ function ShowTopers() {
 				description: `${response.error}` || "Something went wrong",
 				variant: "destructive",
 			});
-		}
+		}else {
+			toast({
+				title: "Success",
+				description: "Deleted",
+			});
+		}	
 	};
 	return (
 		<div className="rounded-lg border max-h-[80dvh] overflow-auto">

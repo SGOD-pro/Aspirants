@@ -6,15 +6,18 @@ import {
 	deleteDoc,
 	addDoc,
 	doc,
+	getDoc,
 	getDocs,
 	DocumentReference,
 } from "firebase/firestore";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-export interface ToperSchemaWithId extends addTopersSchemaType {
+export interface ToperSchemaWithId  {
 	uid: string;
 	photoURL: string;
+	name: string;
+	details: string;
 }
 
 interface ToperStore {
@@ -63,13 +66,18 @@ const toperStore = create<ToperStore>()(
 						photoURL: url.fileURL,
 					}
 				);
-				const docId: string = docRef.id;
-				set((state) => ({
-					courses: state.topers
-						? [...state.topers, { ...obj, uid: docId }]
-						: [{ ...obj, uid: docId }],
-				}));
-
+				const docData: ToperSchemaWithId = {
+					uid: docRef.id,
+					photoURL: url.fileURL,
+					name: obj.name,
+					details: obj.details,
+				};
+				console.log(docData);
+				set((state) => {
+					state.topers
+						? state.topers.push(docData)
+						: (state.topers = [docData]);
+				});
 				return { success: true };
 			} catch (error) {
 				return { success: false, error: error as Error };
@@ -77,11 +85,11 @@ const toperStore = create<ToperStore>()(
 		},
 		deleteToper: async (id: string) => {
 			try {
-				await deleteDoc(doc(db, "courses", id));
-				return { success: true };
+				await deleteDoc(doc(db, "topers", id));
 				set((state) => ({
-					courses: state.topers?.filter((toper) => toper.uid !== id) || null,
+					topers: state.topers?.filter((toper) => toper.uid !== id) || null,
 				}));
+				return { success: true };
 			} catch (error) {
 				return { success: false, error: error as Error };
 			}
