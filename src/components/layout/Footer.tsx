@@ -42,7 +42,7 @@ function Footer() {
 				<div className="flex text-neutral-300 justify-around gap-5 md:justify-between text-center items-center">
 					<p className="font-light">
 						Contact no:{" "}
-						<Link type="tel" href="tel:+919999999999" className="underline">
+						<Link type="tel" href="tel:+918967665652" className="underline">
 							+91 89676 65652
 						</Link>
 					</p>

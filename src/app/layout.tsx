@@ -8,11 +8,11 @@ const raleway = Raleway({ subsets: ["latin"] });
 
 import { Toaster } from "@/components/ui/toaster";
 export const metadata = {
-	title:"Aspirants Classes - Educational Excellence in Raniganj",
+	title: "Aspirants Classes - Educational Excellence in Raniganj",
 
 	description:
 		"Aspirants Classes is a premier educational institution located in Raniganj, West Bengal. We offer top-notch coaching for school, competitive, and undergraduate courses, ensuring the highest quality education and guidance for students.",
-		
+
 	keywords: [
 		"Aspirants Classes",
 		"Raniganj",
@@ -55,7 +55,6 @@ export const metadata = {
 import Navbar from "@/components/layout/Navbar";
 import Main from "./Main";
 
-
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -65,7 +64,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-		
+			<head>
+				<link rel="icon" href="/favicon.ico" />
+			</head>
 			<body
 				className={`${raleway.className} scrollbar w-screen overflow-x-hidden body`}
 			>

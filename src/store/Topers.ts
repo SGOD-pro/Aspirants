@@ -1,6 +1,6 @@
 import { db } from "@/config/client";
 import uploadFile from "@/lib/UploadFiles";
-import { addTopersSchemaType } from "@/models/ToperSchema";
+import { addTopersSchemaType } from "@/schema/ToperSchema";
 import {
 	collection,
 	deleteDoc,

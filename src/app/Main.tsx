@@ -34,6 +34,7 @@ function Main({ children }: Readonly<{ children: React.ReactNode }>) {
 			console.log("from main");
 			resetHistory();
 			verifySession();
+			getAllCourses();
 		}
 	}, [hydrated, verifySession]);
 	const [showCurtain, setShowCurtain] = React.useState(true);

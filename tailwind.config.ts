@@ -74,6 +74,8 @@ const config = {
 				fifth: "moveInCircle 20s ease infinite",
 				scroll:
 					"scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
+				marquee: "marquee var(--duration) linear infinite",
+				"marquee-vertical": "marquee-vertical var(--duration) linear infinite",
 			},
 			scroll: {
 				to: {
@@ -129,8 +131,11 @@ const config = {
 						transform: "translateY(-50%)",
 					},
 				},
+				marquee: {
+					from: { transform: "translateX(0)" },
+					to: { transform: "translateX(calc(-100% - var(--gap)))" },
+				},
 			},
-			
 		},
 	},
 	plugins: [

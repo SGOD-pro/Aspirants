@@ -37,7 +37,7 @@ function ShowEvent() {
             key={index}
           >
             <div className="p-2 rounded-lg w-[90%] overflow-hidden">
-              <div className="marquee">
+              <div className="animate-marquee marquee">
                 <p className="marquee-content">{event.description}</p>
               </div>
             </div>

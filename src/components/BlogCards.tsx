@@ -31,7 +31,7 @@ function Blogs({ className }: { className: string }) {
 	};
 	useEffect(() => {
 		async function fetch() {
-			if (!blogs) {
+			if (!blogs||blogs.length === 0) {
 				console.log("fetching blogs");
 				await readAllFilesFromStorage();
 			}

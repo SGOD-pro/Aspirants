@@ -40,9 +40,9 @@ export default function RootLayout({
 	}, []);
 	return (
 		<ProtectedRoute allowedRoles={["admin"]}>
-			<main className="grid grid-cols-[1fr,4fr] w-screen max-h-[100dvh] overflow-hidden">
+			<main className="w-screen max-h-[100dvh] overflow-hidden flex">
 				<AdminNavbar />
-				<div className="border-l p-2 pt-0 max-h-[100dvh]  overflow-auto overflow-x-hidden scrollbar">
+				<div className="border-l pt-0 max-h-[100dvh] w-[calc(100%-4rem)] md:w-[calc(100%-10rem)] overflow-auto overflow-x-hidden scrollbar">
 					{children}
 				</div>
 			</main>

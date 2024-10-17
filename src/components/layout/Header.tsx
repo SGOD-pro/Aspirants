@@ -16,12 +16,12 @@ export default function Header({ children }: { children: React.ReactNode }) {
 	}, []);
 	return (
 		<>
-			<header className="border-b border-white/70 p-4 flex gap-4 items-center justify-end sticky top-0 bg-slate-950/60 backdrop-blur">
+			<header className="border-b border-white/70 p-2 md:p-4 flex gap-4 items-center justify-end sticky top-0 bg-slate-950/60 backdrop-blur">
 				{isMobileView ? (
 					<Sheet>
 						<SheetTrigger asChild className="border">
 							<Button variant="outline" className="rounded-full" size={"icon"}>
-								<IconMenu className="text-primary" id="nav-toggle" />
+								<IconMenu className="text-primary w-4 h-4" id="nav-toggle" />
 							</Button>
 						</SheetTrigger>
 						<SheetContent className="">

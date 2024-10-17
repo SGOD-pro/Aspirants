@@ -39,10 +39,10 @@ async function Content({ content }: { content: string }) {
 		.use(rehypeAddLinkClasses)
 		.use(rehypeAutolinkHeadings)
 		.use(rehypePrettyCode, {
-			theme: "dracula",
+			theme: "github-dark-default",
 			transformers: [
 				transformerCopyButton({
-					visibility: "always",
+					visibility: "hover",
 					feedbackDuration: 3_000,
 				}),
 			],
@@ -51,9 +51,9 @@ async function Content({ content }: { content: string }) {
 
 	const htmlContent = (await processor.process(content)).toString();
 	return (
-		<div className="max-w-4xl m-auto ">
+		<div className="max-w-4xl m-auto">
 			<div
-				className="prose prose-invert w-full max-w-none sm:-translate-x-36"
+				className="prose prose-invert w-full max-w-none sm:-translate-x-36 scroll-smooth"
 				dangerouslySetInnerHTML={{ __html: htmlContent }}
 			></div>
 			<PageWithHeadings htmlContent={htmlContent} />

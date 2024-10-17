@@ -1,6 +1,6 @@
-import { addTopersSchema } from "@/models/ToperSchema";
+import { addTopersSchema } from "@/schema/ToperSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { memo, useRef } from "react";
+import React, { memo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -17,6 +17,8 @@ import { Input } from "../ui/input";
 import FileInput from "../ui/FileInput";
 import { toast } from "../ui/use-toast";
 import getTopersStore from "@/store/Topers";
+import Image from "next/image";
+
 function AddTopers() {
 	const form = useForm<z.infer<typeof addTopersSchema>>({
 		resolver: zodResolver(addTopersSchema),
@@ -24,6 +26,8 @@ function AddTopers() {
 	const { addToper } = getTopersStore();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [key, setKey] = React.useState(0);
+	const [preview, setPreview] = useState<string | null>(null); // State to store the preview URL
+
 	async function onSubmit(values: z.infer<typeof addTopersSchema>) {
 		console.log(values);
 		const response = await addToper(values);
@@ -41,16 +45,27 @@ function AddTopers() {
 		}
 		form.reset();
 		setKey((prev) => prev + 1);
+		setPreview(null); // Reset the preview on submit
 		if (fileInputRef.current) {
 			fileInputRef.current.value = "";
 		}
 	}
 
+	// Function to handle image preview
+	const handleImagePreview = (file: File | null) => {
+		if (file) {
+			const objectUrl = URL.createObjectURL(file);
+			setPreview(objectUrl);
+		} else {
+			setPreview(null);
+		}
+	};
+
 	return (
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="space-y-4"
+				className="space-y-2"
 				key={key}
 			>
 				<FormField
@@ -70,14 +85,30 @@ function AddTopers() {
 					name="photo"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Photo</FormLabel>
-							<FormControl>
-								<FileInput
-									onChange={(file) => field.onChange(file)} // Ensure file change is handled
-									accept="image/*"
-									ref={fileInputRef}
-								/>
-							</FormControl>
+							<div className="flex items-center gap-2">
+								<div className="">
+									<FormLabel>Photo</FormLabel>
+									<FormControl className="w-[220px] sm:w-fit">
+										<FileInput
+											onChange={(file) => {
+												field.onChange(file);
+												handleImagePreview(file); // Call the image preview handler
+											}}
+											accept="image/*"
+											ref={fileInputRef}
+										/>
+									</FormControl>
+								</div>
+								<FormLabel className="w-24 h-24 sm:w-32 sm:h-32 cursor-pointer">
+									<Image
+										src={preview || "/default_user.svg"}
+										alt="Preview"
+										className="w-full h-full object-cover rounded-full border"
+										width={200}
+										height={200}
+									/>
+								</FormLabel>
+							</div>
 						</FormItem>
 					)}
 				/>
@@ -89,7 +120,7 @@ function AddTopers() {
 							<FormLabel>Details</FormLabel>
 							<FormControl>
 								<Textarea
-									placeholder="Tell us a little bit about yourself"
+									placeholder="Achivements of the toper...!"
 									className="resize-none"
 									{...field}
 								/>

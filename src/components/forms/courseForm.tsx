@@ -1,5 +1,5 @@
 "use client";
-import { coursesSchema, Course } from "@/models/CourseSchema";
+import { coursesSchema, Course } from "@/schema/CourseSchema";
 import { useForm } from "react-hook-form";
 import React, { lazy, memo, Suspense, useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,16 +21,22 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Dialog from "@/components/Dialog";
 const Addsubject = lazy(() => import("@/components/forms/Addsubject"));
-const AddUniversity = lazy(() => import("@/components/forms/AddUniversity"));
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { getCourseStore } from "@/store/CoursesStore";
+import { coursesStore } from "@/store/CoursesStore";
 import { toast } from "../ui/use-toast";
 import { CirclePlus } from "lucide-react";
-import { universityStore } from "@/store/Universitys";
 import { Skeleton } from "../ui/skeleton";
-
+const types = ["school", "undergraduate", "competitive", "special"];
 function AddCourses({
 	defaultValue,
 	id,
@@ -38,39 +44,45 @@ function AddCourses({
 	defaultValue?: Course;
 	id?: string;
 }) {
-	console.log(defaultValue);
-
-	const { pushCourses, subjects, updateCourses } = getCourseStore();
-	const { universities } = universityStore((state) => ({
-		universities: state.universities,
+	const { pushCourses, subjects, updateCourses } = coursesStore((state) => ({
+		pushCourses: state.pushCourses,
+		subjects: state.subjects,
+		updateCourses: state.updateCourses,
 	}));
+	const [key, setKey] = useState(0)
 	const [disabled, setDisabled] = useState(false);
 	const form = useForm<z.infer<typeof coursesSchema>>({
-		defaultValues: defaultValue || {},
+		defaultValues: defaultValue || {fees:"0"},
 		resolver: zodResolver(coursesSchema),
 	});
 
 	const submit = useCallback(
 		async (values: z.infer<typeof coursesSchema>) => {
-
+			console.log(values);
+			let data = { ...values };
+			if (values.type === "school") {
+				data = {
+					type: values.type,
+					header: values.header,
+					fees: values.fees,
+					name: values.name,
+					subjects: values.subjects,
+				};
+			}
 			setDisabled(true);
 			let response;
 			if (defaultValue && id) {
-				response = await updateCourses(id,values);
-			} else response = await pushCourses(values);
+				response = await updateCourses(id, data);
+			} else {
+				response = await pushCourses(data);
+			}
 			setDisabled(false);
 			if (response.success) {
 				toast({
-					title: (defaultValue && id)?"Course updated!":"Course added!",
-					description: (
-						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-							<code className="text-white">
-								{JSON.stringify(values, null, 2)}
-							</code>
-						</pre>
-					),
+					title: defaultValue && id ? "Course updated!" : "Course added!",
 				});
 				form.reset();
+				setKey((prev) => prev + 1);
 			} else {
 				toast({
 					title: "Error",
@@ -84,137 +96,72 @@ function AddCourses({
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(submit)} className="mt-3 space-y-4">
-				{/* Subject */}
+			<form onSubmit={form.handleSubmit(submit)} className="mt-3 space-y-4" key={key}>
 				<FormField
 					control={form.control}
-					name="subject"
+					name="subjects"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Subject</FormLabel>
-							<div className="flex gap-3 ">
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-								>
-									<FormControl>
-										<SelectTrigger>
-											<SelectValue placeholder="Select a subject" />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
+							<FormLabel className="">
+								Subjects <span className="text-red-500">*</span>
+							</FormLabel>
+							<div className="flex gap-3">
+								<DropdownMenu modal={false}>
+									<DropdownMenuTrigger asChild>
+										<Button variant="outline" className="border-dashed w-full">
+											{form.watch("subjects")?.join(", ") || "Select Subjects"}
+										</Button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent className="w-56">
+										<DropdownMenuLabel>Subjects</DropdownMenuLabel>
+										<DropdownMenuSeparator />
 										{subjects &&
-											subjects.map((subject) => (
-												<SelectItem key={subject.uid} value={subject.name}>
-													{subject.name}
-												</SelectItem>
+											subjects.map((item) => (
+												<FormField
+													key={item.uid}
+													control={form.control}
+													name="subjects"
+													render={({ field }) => {
+														const selectedSubjects = field.value || [];
+														return (
+															<DropdownMenuItem
+																onSelect={(event) => event.preventDefault()}
+															>
+																<FormItem
+																	key={item.uid}
+																	className="flex flex-row items-start space-x-3 space-y-0"
+																>
+																	<FormControl className="space-y-4">
+																		<Checkbox
+																			checked={selectedSubjects.includes(
+																				item.name
+																			)}
+																			onCheckedChange={(checked) => {
+																				const updatedSubjects = checked
+																					? [...selectedSubjects, item.name]
+																					: selectedSubjects.filter(
+																							(value) => value !== item.name
+																					  );
+																				field.onChange(updatedSubjects);
+																			}}
+																		/>
+																	</FormControl>
+																	<FormLabel className="font-normal">
+																		{item.name}
+																	</FormLabel>
+																</FormItem>
+															</DropdownMenuItem>
+														);
+													}}
+												/>
 											))}
-									</SelectContent>
-								</Select>
+									</DropdownMenuContent>
+								</DropdownMenu>
 								<Dialog
 									title="Add subject"
 									content={
-										<Suspense fallback={<Skeleton className="h-36" />}>
-											{<Addsubject />}
-										</Suspense>
-									}
-								>
-									<Button
-										type="button"
-										disabled={disabled}
-										size={"icon"}
-										variant={"outline"}
-									>
-										<CirclePlus className="w-4 h-4" />
-									</Button>
-								</Dialog>
-							</div>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				{/* Collage/School */}
-				<FormField
-					control={form.control}
-					name="type"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>School/Collage</FormLabel>
-							<FormControl>
-								<RadioGroup
-									className="flex gap-3 mt-2 items-center justify-around"
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-								>
-									<FormItem className="flex border w-full h-full rounded-lg">
-										<label
-											htmlFor="school"
-											className="w-full px-4 py-3 h-full space-x-3"
-										>
-											<FormControl>
-												<RadioGroupItem value="school" id="school" />
-											</FormControl>
-											<FormLabel className="font-normal" htmlFor="school">
-												School
-											</FormLabel>
-										</label>
-									</FormItem>
-									<FormItem className="flex border w-full h-full rounded-lg">
-										<label
-											htmlFor="collage"
-											className="w-full px-4 py-3 h-full space-x-3"
-										>
-											<FormControl>
-												<RadioGroupItem value="collage" id="collage" />
-											</FormControl>
-											<FormLabel className="font-normal" htmlFor="collage">
-												Collage
-											</FormLabel>
-										</label>
-									</FormItem>
-								</RadioGroup>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				{/* University/Board */}
-				<FormField
-					control={form.control}
-					name="university"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>University/Board</FormLabel>
-							<div className="flex gap-3 ">
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-								>
-									<FormControl>
-										<SelectTrigger>
-											<SelectValue placeholder="Select a university or board" />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
-										{universities
-											? universities.map((university) => (
-													<SelectItem
-														key={university.uid}
-														value={university.name}
-													>
-														{university.name}
-													</SelectItem>
-											  ))
-											: null}
-									</SelectContent>
-								</Select>
-								<Dialog
-									title="Add university"
-									content={
 										<Suspense fallback={<Skeleton className="h-56" />}>
-											<AddUniversity />
+											<Addsubject />
 										</Suspense>
 									}
 								>
@@ -227,14 +174,50 @@ function AddCourses({
 										<CirclePlus className="w-4 h-4" />
 									</Button>
 								</Dialog>
+								<FormMessage />
 							</div>
-							<FormMessage />
 						</FormItem>
 					)}
 				/>
+				<div className="grid grid-cols-2 gap-3">
+					{/* Type*/}
+					<FormField
+						control={form.control}
+						name="type"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>
+									Type<span className="text-red-500">*</span>
+								</FormLabel>
+								<div className="flex gap-3 ">
+									<Select
+										onValueChange={field.onChange}
+										defaultValue={field.value}
+									>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="Select a university or board" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{types.map((type) => (
+												<SelectItem
+													key={type}
+													value={type}
+													className="capitalize"
+												>
+													{type}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-				{/* Course fees */}
-				<div className="grid sm:grid-cols-2 gap-3">
+					{/* Course fees */}
 					<FormField
 						control={form.control}
 						name="fees"
@@ -254,35 +237,62 @@ function AddCourses({
 							</FormItem>
 						)}
 					/>
+
+					{/* header */}
 					<FormField
 						control={form.control}
-						name="department"
+						name="header"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Department\Class</FormLabel>
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-								>
-									<FormControl>
-										<SelectTrigger>
-											<SelectValue placeholder="Select department" />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
-										<SelectItem value="1st">1st Year</SelectItem>
-										<SelectItem value="2nd">2nd Year</SelectItem>
-										<SelectItem value="3rd">3rd Year</SelectItem>
-										<SelectItem value="4th">4th Year</SelectItem>
-									</SelectContent>
-								</Select>
+								<FormLabel>
+									Header<span className="text-red-500">*</span>
+								</FormLabel>
+								<FormControl>
+									<Input
+										type="number"
+										placeholder="BCA/BSC/12/11/Linear Algebra"
+										onChange={field.onChange}
+										defaultValue={field.value}
+									/>
+								</FormControl>
+
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					{/* name */}
+					<FormField
+						control={form.control}
+						name="name"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>
+									Name{" "}
+									<span className="text-red-500 text-xs">
+										{" "}
+										{"("}If School{")"}
+									</span>
+								</FormLabel>
+								<FormControl>
+									<Input
+										type="text"
+										placeholder="ICSE/CBSE"
+										onChange={field.onChange}
+										defaultValue={field.value}
+									/>
+								</FormControl>
+
 								<FormMessage />
 							</FormItem>
 						)}
 					/>
 				</div>
-
-				<Button type="submit" disabled={form.formState.isSubmitting} className="mt-0">
+				<Button
+					type="submit"
+					disabled={form.formState.isSubmitting}
+					className="mt-0"
+				>
 					Submit
 				</Button>
 			</form>

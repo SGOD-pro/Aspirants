@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { University } from "@/models/UniversitySchema";
+import { University } from "@/schema/UniversitySchema";
 import { db } from "@/config/client";
 import {
 	collection,

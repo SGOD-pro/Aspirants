@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
-import { Student } from "@/models/StudentSchema";
+import { Student } from "@/schema/StudentSchema";
 import { db } from "@/config/client";
 import {
 	collection,

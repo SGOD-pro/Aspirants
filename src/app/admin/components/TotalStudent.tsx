@@ -24,8 +24,8 @@ function TotalStudent() {
 			className="flex gap-2 lg:gap-3 items-center bg-slate-800 rounded-xl md:justify-center hover:scale-95 transition-all py-5 px-4 md:p-0"
 		>
 			<div className="">
-				<div className="rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 p-5 md:p-3 lg:p-4">
-					<UsersRound className=" md:w-7  lg:w-10 w-12 h-12 md:h-7  lg:h-10" />
+				<div className="rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 p-3 lg:p-4">
+					<UsersRound className=" md:w-10 w-8 h-8 md:h-10 " />
 				</div>
 			</div>
 			<div className=" text-slate-200 ">

@@ -21,10 +21,8 @@ const blogDataSchema = z
 		title: z.string(),
 		description: z.string().max(120, { message: "Description is too long" }).min(10, { message: "Description is too short" }),
 		image: z.string(),
-		slug: z.string(),
-		date: z.string(), // You can add further validation for date format if necessary
+		date: z.string(),
 		tags: z.array(z.string()).optional(),
-		// Allow additional optional fields using `.catchall` for dynamic key-value pairs
 	})
 	.catchall(z.any());
 

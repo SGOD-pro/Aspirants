@@ -14,7 +14,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import blogShema, { blogDataSchema } from "@/models/BlogSchema";
+import blogShema, { blogDataSchema } from "@/schema/BlogSchema";
 import { Button } from "@/components/ui/button";
 import Blogs from "@/components/BlogCards";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -43,7 +43,7 @@ function BlogForm() {
 				</Dialog>
 			</Header>
 			<Container>
-				<Blogs className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1 lg:p-4"/>
+				<Blogs className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1 lg:p-4" />
 			</Container>
 		</div>
 	);
@@ -52,7 +52,7 @@ function BlogForm() {
 export default BlogForm;
 
 function AddBlogForm() {
-	const { addBlog } = useBlogStore();
+	const { addBlog, checkIfBlogExists, updateBlog } = useBlogStore();
 	const form = useForm<z.infer<typeof blogShema>>({
 		resolver: zodResolver(blogShema),
 	});
@@ -61,7 +61,7 @@ function AddBlogForm() {
 		try {
 			const fileData = await readFileContent(values.file);
 			const { data, content } = matter(fileData);
-
+			
 			const validation = blogDataSchema.safeParse(data);
 			if (!validation.success) {
 				console.log("Validation failed:", validation.error);
@@ -72,18 +72,37 @@ function AddBlogForm() {
 				});
 				return;
 			}
-
+	
 			const validData: BlogData = validation.data;
-
-			const response = await addBlog({ data: validData, content });
-			if (response.error) {
-				toast({
-					title: "Error",
-					description: response.error.message,
-					variant: "destructive",
-				});
+			const { isExists, id } = await checkIfBlogExists(validData);
+			
+			if (isExists && id) {
+				const isUpdate = confirm("This blog already exists. Do you want to update it?");
+				if (!isUpdate) {
+					form.reset();
+					setKey((prev) => prev + 1);
+					return;
+				}
+				const response = await updateBlog(id, { data: validData, content });
+				if (!response.success) {
+					toast({
+						title: "Error",
+						description: response?.error?.message||"Couldn't update blog",
+						variant: "destructive",
+					});
+				}
+			} else {
+				// Add a new blog if it doesn't exist
+				const response = await addBlog({ data: validData, content });
+				if (!response.success) {
+					toast({
+						title: "Error",
+						description: response?.error?.message||"Couldn't add blog",
+						variant: "destructive",
+					});
+				}
 			}
-
+	
 			form.reset();
 			setKey((prev) => prev + 1);
 		} catch (error) {

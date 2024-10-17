@@ -2,11 +2,15 @@ import Link from "next/link";
 import React, { lazy, Suspense } from "react";
 import { HoverBorderGradient } from "@/components/ui/border-gradient";
 import { Skeleton } from "../ui/skeleton";
+import Event from "./Event";
 const EasterEgg = lazy(() => import("../ui/EsterEgg"));
 
 function Section1() {
 	return (
 		<>
+			<div className="absolute top-20 z-[100] left-0 w-full">
+				<Event/>
+			</div>
 			<aside className="flex flex-col h-full p-10 sm:p-16 pt-8 sm:pt-36 justify-center gap-4 sm:w-1/2 sm:min-w-96 text-center sm:text-left">
 				<p className="text-2xl sm:text-4xl">Welcome to,</p>
 				<h1 className="text-5xl sm:text-8xl font-bold">
@@ -28,7 +32,7 @@ function Section1() {
 					</HoverBorderGradient>
 				</div>
 			</aside>
-			<div className="pr-0 xl:pr-8 hidden lg:block absolute right-10 xl:right-20 top-10 z-[100]">
+			<div className="pr-0 xl:pr-8 hidden lg:block absolute right-10 xl:right-20 top-10 z-50">
 				<Suspense fallback={<Skeleton className="w-full h-full" />}>
 					<EasterEgg />
 				</Suspense>

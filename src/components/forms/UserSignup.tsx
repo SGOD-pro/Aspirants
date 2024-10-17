@@ -4,7 +4,7 @@ import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import userSignupSchema from "@/models/UserSignup";
+import userSignupSchema from "@/schema/UserSignup";
 import {
 	Form,
 	FormControl,

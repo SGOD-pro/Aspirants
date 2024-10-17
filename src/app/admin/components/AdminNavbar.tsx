@@ -9,47 +9,48 @@ import {
 	Library,
 	Layers,
 	LayoutPanelLeft,
-	Image,
+	Image as ImageIcon,
 	Server,
 } from "lucide-react";
 import { getAuthState } from "@/store/Auth";
 import { useToast } from "@/components/ui/use-toast";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 const links = [
 	{
 		name: "Home",
 		link: "/admin/dashboard",
-		icon: <LayoutPanelLeft className="md:w-4 md:h-4" />,
+		icon: <LayoutPanelLeft className="w-4 h-4" />,
 	},
 	{
 		name: "Courses",
 		link: "/admin/dashboard/courses",
-		icon: <Library className="md:w-4 md:h-4" />,
+		icon: <Library className="w-4 h-4" />,
 	},
 	{
 		name: "Fees",
 		link: "/admin/dashboard/fees",
-		icon: <IndianRupee className="md:w-4 md:h-4" />,
+		icon: <IndianRupee className="w-4 h-4" />,
 	},
 	{
 		name: "Blogs",
 		link: "/admin/dashboard/blogs",
-		icon: <Notebook className="md:w-4 md:h-4" />,
+		icon: <Notebook className="w-4 h-4" />,
 	},
 	{
 		name: "Layout",
 		link: "/admin/dashboard/layout",
-		icon: <Layers className="md:w-4 md:h-4" />,
+		icon: <Layers className="w-4 h-4" />,
 	},
 	{
 		name: "Gallery",
 		link: "/admin/dashboard/gallery",
-		icon: <Image className="md:w-4 md:h-4" />,
+		icon: <ImageIcon className="w-4 h-4" />,
 	},
 	{
 		name: "Storage",
 		link: "/admin/dashboard/storage",
-		icon: <Server className="md:w-4 md:h-4" />,
+		icon: <Server className="w-4 h-4" />,
 	},
 ];
 
@@ -63,7 +64,7 @@ function AdminNavbar() {
 		setDisable(true);
 		const response = await logout();
 		console.log(response);
-		
+
 		if (response.success) {
 			router.push("/");
 		} else {
@@ -76,10 +77,12 @@ function AdminNavbar() {
 		}
 	};
 	return (
-		<div className="p-2 md:p-4 w-full h-screen bg-gradient-to-b from-[#020817] to-[#1a1c1c] overflow-auto">
+		<nav className=" w-16 md:w-40 h-screen bg-gradient-to-b from-[#020814] to-[#000e33] overflow-auto">
 			<h1 className="py-3 font-bold text-2xl px-2 hidden md:block">Admin</h1>
-			<h1 className="py-3 font-bold text-2xl px-2 md:hidden text-center">L</h1>
-			<ul className=" space-y-1 w-full border-y border-primary/50 py-3">
+			<div className="py-2 font-bold text-2xl px-2 md:hidden text-center w-full h-14 ">
+				<Image src={"/3.png"} width={80} height={80} alt={"A"} className="w-full h-full object-contain m-auto"/>
+			</div>
+			<ul className="sm:space-y-1 w-full border-y border-primary/50 sm:p-2 py-3">
 				{links.map((link) => (
 					<li className="w-full" key={link.name}>
 						<Link href={link.link} className=" ">
@@ -99,14 +102,15 @@ function AdminNavbar() {
 			</ul>
 			<Button
 				variant="destructive"
-				className="mt-5 flex gap-2 disabled:cursor-not-allowed w-full md:w-fit"
+				className="mt-5 flex gap-2 disabled:cursor-not-allowed md:w-fit mx-auto"
 				onClick={Logout}
 				disabled={disable}
+				size={"sm"}
 			>
 				<span className="hidden md:block">Sign Out</span>
-				<LogOut />
+				<LogOut className="w-4 h-4" />
 			</Button>
-		</div>
+		</nav>
 	);
 }
 

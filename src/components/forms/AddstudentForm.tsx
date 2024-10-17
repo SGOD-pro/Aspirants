@@ -3,7 +3,7 @@ import React, { memo, useState, lazy, Suspense } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { studentFormSchema } from "@/models/StudentSchema";
+import { studentFormSchema } from "@/schema/StudentSchema";
 import { Button } from "@/components/ui/button";
 import {
 	Form,

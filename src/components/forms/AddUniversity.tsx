@@ -1,4 +1,4 @@
-import { universitySchema } from "@/models/UniversitySchema";
+import { universitySchema } from "@/schema/UniversitySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { memo } from "react";
 import { useForm } from "react-hook-form";

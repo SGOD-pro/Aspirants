@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 const FormSchema = z.object({
 	subject: z.string().min(2, {
@@ -23,6 +24,7 @@ const FormSchema = z.object({
 });
 const { pushSubjects } = getCourseStore();
 export default function Addsubject() {
+	const [key, setKey] = useState(0)
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
@@ -35,12 +37,9 @@ export default function Addsubject() {
 		if (response.success) {
 			toast({
 				title: "Subject added!",
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">{JSON.stringify(data, null, 2)}</code>
-					</pre>
-				),
 			});
+			setKey((prev) => prev + 1);
+			form.reset();
 		} else {
 			toast({
 				title: "Error",
@@ -57,6 +56,7 @@ export default function Addsubject() {
 					form.handleSubmit(onSubmit)(e);
 				}}
 				className="space-y-6"
+				key={key}
 			>
 				<FormField
 					control={form.control}

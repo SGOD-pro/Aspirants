@@ -1,7 +1,7 @@
 "use client";
 import React, { memo, Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { FilePenLine, Plus, Trash2 } from "lucide-react";
+import { FilePenLine, Plus, Trash2,View } from "lucide-react";
 import { coursesStore,CourseWithId } from "@/store/CoursesStore";
 import {
   Table,
@@ -18,15 +18,15 @@ import Header from "@/components/layout/Header";
 import Container from "@/components/layout/Container";
 const AddCourses = React.lazy(() => import("@/components/forms/courseForm"));
 const Addsubject = React.lazy(() => import("@/components/forms/Addsubject"));
-const AddUniversity = React.lazy(() => import("@/components/forms/AddUniversity"));
+const ShowSubjects = React.lazy(() => import("../../components/ShowSubjects"));
 
 // Memoized TableRow component
 const MemoizedTableRow = memo(({ course, deleteFunction }:{ course:CourseWithId, deleteFunction: (id:string) => void }) => {
   return (
     <TableRow key={course.uid}>
-      <TableCell className="font-medium uppercase">{course.subject}</TableCell>
-      <TableCell className=" uppercase">{course.department}</TableCell>
-      <TableCell className=" uppercase">{course.university}</TableCell>
+      <TableCell className="font-medium uppercase">{course.header}</TableCell>
+      <TableCell className=" uppercase">{course.type}</TableCell>
+      <TableCell className=" uppercase">{course.subjects}</TableCell>
       <TableCell className="">{course.fees}</TableCell>
       <TableCell className="space-x-3">
         <Button
@@ -108,10 +108,10 @@ function AdminCourses() {
           </Button>
         </Dialog>
         <Dialog
-          title="Add University"
+          title="Show Subjects"
           content={
             <Suspense fallback={<Skeleton className="h-56" />}>
-              <AddUniversity />
+              <ShowSubjects />
             </Suspense>
           }
         >
@@ -119,7 +119,7 @@ function AdminCourses() {
             variant={"secondary"}
             className="flex gap-1 items-center font-bold"
           >
-            University <Plus />
+            Show Subjects
           </Button>
         </Dialog>
       </Header>

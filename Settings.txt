@@ -1,0 +1,26 @@
+To customize the text and logo displayed during Google authentication with Firebase, you can achieve this by setting up a **Custom Domain** for your Firebase project and customizing the **branding settings** for the OAuth consent screen. Here's how you can do it:
+
+### Step 1: Set Up a Custom Domain
+1. Go to the Firebase Console: [Firebase Console](https://console.firebase.google.com/).
+2. Select your project (e.g., `aspirants-b1e24`).
+3. In the left-hand menu, navigate to **Hosting**.
+4. Follow the instructions to connect a custom domain (e.g., `aspirantclasses.com`). You’ll need to verify ownership of the domain and configure DNS settings to point to Firebase Hosting.
+
+### Step 2: Customize OAuth Consent Screen
+1. Go to the **Google Cloud Console**: [Google Cloud Console](https://console.cloud.google.com/).
+2. In the top-left menu, select **APIs & Services** > **OAuth consent screen**.
+3. Choose the project that corresponds to your Firebase project.
+4. Customize the following fields:
+   - **App Name**: Change this to "Aspirant Classes."
+   - **App Logo**: Upload your logo here.
+   - **Support Email** and other contact information as necessary.
+5. Save the changes.
+
+### Step 3: Reconfigure Firebase Authentication Provider
+1. Go back to the **Firebase Console**.
+2. Navigate to **Authentication** > **Sign-in method**.
+3. Click on the **Google** provider and ensure it’s using the correct OAuth credentials from the Google Cloud Console.
+
+This will ensure that your custom domain (`aspirantclasses.com`) and logo are reflected during the Google authentication process instead of `aspirants-b1e24.firebaseapp.com`.
+
+Would you like help configuring any of these steps in more detail?

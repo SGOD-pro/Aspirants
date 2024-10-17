@@ -60,7 +60,7 @@ function AdminDashboard() {
 				</Dialog>
 			</Header>
 			<Container>
-				<section className="md:h-72 lg:p-6 lg:pb-4">
+				<section className="md:h-72">
 					<div className="rounded-2xl w-full h-full md:bg-slate-800 shadow-md shadow-black grid md:grid-cols-3 md:items-center p-2 lg:p-4 gap-4 md:gap-0">
 						<Suspense fallback={<Skeleton className="w-full h-full" />}>
 							<TotalStudent />
@@ -74,11 +74,11 @@ function AdminDashboard() {
 					</div>
 				</section>
 
-				<section className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] overflow-auto items-center gap-2">
+				<section className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] overflow-auto items-center gap-2 mt-4">
 					<Suspense fallback={<Skeleton className="w-full h-full" />}>
 						<ToperSection />
 					</Suspense>
-					<div className="lg:text-base text-xs h-full overflow-hidden border-l px-3">
+					<div className="lg:text-base text-xs h-full overflow-hidden border-l pl-2">
 						<h3 className="font-bold text-2xl mb-3 px-3">Events</h3>
 						<Suspense fallback={<Skeleton className="w-full h-full" />}>
 							<ShowEvent />

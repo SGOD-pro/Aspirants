@@ -21,7 +21,7 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
-import { eventSchema } from "@/models/EventSchema";
+import { eventSchema } from "@/schema/EventSchema";
 import { Textarea } from "@/components/ui/textarea";
 import { useEventStore } from "@/store/Event";
 

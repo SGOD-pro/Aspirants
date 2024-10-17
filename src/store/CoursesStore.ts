@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { Course } from "@/models/CourseSchema";
+import { Course } from "@/schema/CourseSchema";
 import { db } from "@/config/client";
 import {
 	collection,
@@ -77,12 +77,14 @@ const coursesStore = create<Courses>()(
 			allCourses: async () => {
 				try {
 					const querySnapshot = await getDocs(collection(db, "courses"));
+					console.log(querySnapshot.size)
 					if (get().courses && get().courses?.length === querySnapshot.size) {
 						console.log("not overlaping");
 						return { success: true };
 					}
 					const courses = querySnapshot.docs.map((doc) => ({
 						...doc.data(),
+						subjects: doc.data().subjects.join(", "),
 						uid: doc.id,
 					})) as CourseWithId[];
 					set({ courses });

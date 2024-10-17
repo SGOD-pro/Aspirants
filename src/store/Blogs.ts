@@ -10,6 +10,7 @@ import {
 	deleteDoc,
 	QuerySnapshot,
 	query,
+	updateDoc,
 	where,
 } from "firebase/firestore";
 import { db } from "@/config/client"; // Your Firestore instance
@@ -22,23 +23,30 @@ export interface BlogWithId extends BlogDetails {
 	id: string;
 }
 interface BlogStore {
-	blogs: BlogWithId[] | null;
+	blogs: BlogWithId[];
 	hydrated: boolean;
 	setHydrated: () => void;
 	readAllFilesFromStorage: () => Promise<void>;
 	addBlog: (blog: BlogDetails) => Promise<{ success: boolean; error?: Error }>;
 	deleteBlog: (id: string) => Promise<{ success: boolean; error?: Error }>;
+	updateBlog: (
+		id: string,
+		blog: BlogDetails
+	) => Promise<{ success: boolean; error?: Error }>;
 	searchBlogsByTitle: (
 		title: string
 	) => Promise<{ success: boolean; blogs?: BlogWithId[]; error?: Error }>;
 	getContent: (
 		id: string
 	) => Promise<{ success: boolean; error?: Error; content?: string }>;
+	checkIfBlogExists: (
+		data: BlogData
+	) => Promise<{ isExists: boolean; id?: string }>;
 }
 
 export const useBlogStore = create<BlogStore>()(
 	immer((set) => ({
-		blogs: null,
+		blogs: [],
 		hydrated: false,
 
 		setHydrated: () => {
@@ -49,13 +57,10 @@ export const useBlogStore = create<BlogStore>()(
 
 		async readAllFilesFromStorage() {
 			try {
-				// Get the reference to the "blogs" collection
 				const blogsCollectionRef = collection(db, "blogs");
 
-				// Fetch all documents from the "blogs" collection
 				const querySnapshot: QuerySnapshot = await getDocs(blogsCollectionRef);
 
-				// Transform the documents into an array of BlogDetails
 				const blogs: BlogWithId[] = querySnapshot.docs.map((doc) => {
 					const data = doc.data() as BlogData;
 					return {
@@ -82,12 +87,9 @@ export const useBlogStore = create<BlogStore>()(
 			}
 		},
 
-		// Function to add a new blog
 		async addBlog(blog: BlogDetails) {
 			try {
 				const { data, content } = blog;
-
-				// Store the blog metadata and content in Firestore
 				const docRef: DocumentReference = await addDoc(
 					collection(db, "blogs"),
 					{
@@ -96,14 +98,13 @@ export const useBlogStore = create<BlogStore>()(
 						slug: data.slug,
 						tags: data.tags || [],
 						date: data.date || new Date().toISOString(),
-						content: content, // Storing the content directly in Firestore
-						image: data.image, // Assuming image is stored as URL or path
+						content: content,
+						image: data.image,
 					}
 				);
 
 				const docId: string = docRef.id;
 
-				// Step 3: Update Zustand state
 				set((state) => {
 					state.blogs = state.blogs
 						? [...state.blogs, { data, id: docId }]
@@ -113,6 +114,47 @@ export const useBlogStore = create<BlogStore>()(
 				return { success: true };
 			} catch (error) {
 				console.error("Error adding blog:", error);
+				return { success: false, error: error as Error };
+			}
+		},
+		async checkIfBlogExists(
+			data: BlogData
+		): Promise<{ isExists: boolean; id?: string }> {
+			try {
+				const blogsRef = collection(db, "blogs");
+				const q = query(blogsRef, where("title", "==", data.title));
+				const querySnapshot = await getDocs(q);
+				if (!querySnapshot.empty) {
+					return { isExists: true, id: querySnapshot.docs[0].id };
+				}
+				return { isExists: false };
+			} catch (error) {
+				console.error("Error checking if blog exists:", error);
+				return { isExists: false };
+			}
+		},
+		async updateBlog(id: string, blog: Partial<BlogDetails>) {
+			try {
+				if (!id || !blog) {
+					return { success: false, error: new Error("Cannot get uid!") };
+				}
+
+			await updateDoc(doc(db, "blogs", id), blog);
+				set((state) => ({
+					blogs:
+						state.blogs?.map((blog) =>
+							blog.id === id
+								? {
+										...blog,
+										data: { ...blog.data, ...blog.data },
+										content: blog.content,
+								  }
+								: blog
+						),
+					}));
+				return { success: true };
+			} catch (error) {
+				console.error("Error updating blog:", error);
 				return { success: false, error: error as Error };
 			}
 		},
@@ -152,37 +194,35 @@ export const useBlogStore = create<BlogStore>()(
 		},
 		async searchBlogsByTitle(title: string) {
 			try {
-			  // Fetch all blogs or a large subset of them
-			  const blogsCollectionRef = collection(db, "blogs");
-			  const querySnapshot = await getDocs(blogsCollectionRef);
-			  
-			  // Filter blogs client-side
-			  const blogs: BlogWithId[] = querySnapshot.docs
-				.map((doc) => {
-				  const data = doc.data() as BlogData;
-				  return {
-					id: doc.id,
-					data: {
-					  title: data.title,
-					  description: data.description,
-					  image: data.image,
-					  slug: data.slug,
-					  date: data.date,
-					  tags: data.tags || [],
-					},
-				  };
-				})
-				.filter((blog) =>
-				  blog.data.title.toLowerCase().includes(title.toLowerCase()) // Substring match, case-insensitive
-				);
-		  
-			  return { success: true, blogs };
+				// Fetch all blogs or a large subset of them
+				const blogsCollectionRef = collection(db, "blogs");
+				const querySnapshot = await getDocs(blogsCollectionRef);
+
+				// Filter blogs client-side
+				const blogs: BlogWithId[] = querySnapshot.docs
+					.map((doc) => {
+						const data = doc.data() as BlogData;
+						return {
+							id: doc.id,
+							data: {
+								title: data.title,
+								description: data.description,
+								image: data.image,
+								slug: data.slug,
+								date: data.date,
+								tags: data.tags || [],
+							},
+						};
+					})
+					.filter((blog) =>
+						blog.data.title.toLowerCase().includes(title.toLowerCase())
+					);
+
+				return { success: true, blogs };
 			} catch (error) {
-			  console.error("Error searching blogs by title:", error);
-			  return { success: false, error: error as Error };
+				console.error("Error searching blogs by title:", error);
+				return { success: false, error: error as Error };
 			}
-		  }
-		  
-		  
+		},
 	}))
 );
